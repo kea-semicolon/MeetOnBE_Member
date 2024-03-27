@@ -1,4 +1,4 @@
-package semicolon.MeetOn.domain.admin.OAuth;
+package semicolon.MeetOn.global.OAuth;
 
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package semicolon.MeetOn.domain.admin.OAuth.kakao;
+package semicolon.MeetOn.global.OAuth.kakao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

@@ -1,8 +1,10 @@
 package semicolon.MeetOn.global.jwt;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import semicolon.MeetOn.domain.admin.dto.AuthToken;
+import semicolon.MeetOn.global.util.CookieUtil;
 
 import java.util.Date;
 
@@ -24,7 +26,6 @@ public class AuthTokensGenerator {
         String subject = memberId.toString();
         String accessToken = jwtTokenProvider.generate(subject, accessTokenExpiredAt);
         String refreshToken = jwtTokenProvider.generate(subject, refreshTokenExpiredAt);
-
         return AuthToken.of(accessToken, refreshToken, BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME / 1000L);
     }
 

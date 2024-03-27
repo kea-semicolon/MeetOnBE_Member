@@ -1,7 +1,5 @@
-package semicolon.MeetOn.domain.admin.OAuth.kakao;
+package semicolon.MeetOn.global.OAuth.kakao;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -9,10 +7,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import semicolon.MeetOn.domain.admin.OAuth.OAuthApiClient;
-import semicolon.MeetOn.domain.admin.OAuth.OAuthInfoResponse;
-import semicolon.MeetOn.domain.admin.OAuth.OAuthLoginParams;
-import semicolon.MeetOn.domain.admin.OAuth.OAuthProvider;
+import semicolon.MeetOn.global.OAuth.OAuthApiClient;
+import semicolon.MeetOn.global.OAuth.OAuthInfoResponse;
+import semicolon.MeetOn.global.OAuth.OAuthLoginParams;
+import semicolon.MeetOn.global.OAuth.OAuthProvider;
 
 @Component
 @RequiredArgsConstructor

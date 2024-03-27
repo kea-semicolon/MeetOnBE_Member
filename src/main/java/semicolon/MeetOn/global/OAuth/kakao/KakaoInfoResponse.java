@@ -1,10 +1,10 @@
-package semicolon.MeetOn.domain.admin.OAuth.kakao;
+package semicolon.MeetOn.global.OAuth.kakao;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import semicolon.MeetOn.domain.admin.OAuth.OAuthInfoResponse;
-import semicolon.MeetOn.domain.admin.OAuth.OAuthProvider;
+import semicolon.MeetOn.global.OAuth.OAuthInfoResponse;
+import semicolon.MeetOn.global.OAuth.OAuthProvider;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)

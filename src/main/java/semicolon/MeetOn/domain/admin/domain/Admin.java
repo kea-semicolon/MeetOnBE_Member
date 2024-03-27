@@ -8,8 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import semicolon.MeetOn.domain.admin.OAuth.OAuthInfoResponse;
-import semicolon.MeetOn.domain.admin.dto.AdminDto;
+import semicolon.MeetOn.global.OAuth.OAuthInfoResponse;
 
 @Getter
 @Entity

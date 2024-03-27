@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -32,50 +34,18 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf((csrfConfig) -> csrfConfig.disable())
-                .headers((headerConfig) -> headerConfig.frameOptions(frameOptionsConfig ->
-                        frameOptionsConfig.disable()))
-//                .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
-//                        .requestMatchers("/*").permitAll()
-//                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .headers((headerConfig) -> headerConfig.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .authorizeHttpRequests(
+                        (authorizeRequests) -> authorizeRequests
+                                .requestMatchers("/oauth/**").permitAll()
+                                .anyRequest().authenticated()
+                )
                 .exceptionHandling((exceptionConfig) -> exceptionConfig.authenticationEntryPoint(jwtAuthenticationEntryPoint)
                         .accessDeniedHandler(jwtAccessDeniedHandler)
                 )
-//                .formLogin((formLogin) -> formLogin
-//                        .loginPage("/login/login")
-//                        .usernameParameter("username")
-//                        .passwordParameter("password")
-//                        .loginProcessingUrl("/login/login-proc")
-//                        .defaultSuccessUrl("/", true)
-//                )
-                .logout((logoutConfig) -> logoutConfig.logoutSuccessUrl("/")
-                )
+                .logout((logoutConfig) -> logoutConfig.logoutSuccessUrl("/"))
                 .addFilterBefore(new JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
-//        http
-//                .httpBasic().disable()
-//                .csrf().disable()
-//                .cors();
-//
-//        http
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//
-//                .and()
-//                .exceptionHandling()
-//                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-//                .accessDeniedHandler(jwtAccessDeniedHandler)
-//
-//                .and()
-//                .authorizeHttpRequests()
-//                .antMatchers("*").permitAll()
-//                .anyRequest().authenticated()
-//
-//                .and()
-//                .headers()
-//                .frameOptions()
-//                .sameOrigin()
-//
-//                .and()
-//                .apply(new JwtSecurityConfig(tokenProvider));
     }
 }

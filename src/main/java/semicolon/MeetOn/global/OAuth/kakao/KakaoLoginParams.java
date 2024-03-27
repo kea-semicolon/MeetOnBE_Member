@@ -1,11 +1,11 @@
-package semicolon.MeetOn.domain.admin.OAuth.kakao;
+package semicolon.MeetOn.global.OAuth.kakao;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import semicolon.MeetOn.domain.admin.OAuth.OAuthLoginParams;
-import semicolon.MeetOn.domain.admin.OAuth.OAuthProvider;
+import semicolon.MeetOn.global.OAuth.OAuthLoginParams;
+import semicolon.MeetOn.global.OAuth.OAuthProvider;
 
 @Getter
 @NoArgsConstructor
