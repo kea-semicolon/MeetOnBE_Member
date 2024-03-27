@@ -9,13 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import semicolon.MeetOn.domain.admin.application.AdminService;
 import semicolon.MeetOn.global.OAuth.kakao.KakaoLoginParams;
 import semicolon.MeetOn.domain.admin.dto.AuthToken;
-import semicolon.MeetOn.global.util.CookieUtil;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("")
+@RequestMapping
 public class AdminController {
 
     private final AdminService adminService;
@@ -38,12 +37,20 @@ public class AdminController {
 
     /**
      * refreshToken으로 accessToken 갱신
+     * 아마 블로그 특성 상 자동 갱신이 맞을듯?
+     * 자동 갱신은 refresh 서비스 로직 그대로 filter로 옮기면 될듯
      * @param request
      * @param response
      * @return
      */
-    @PostMapping("/oauth/refresh")
+    @PostMapping("/member/refresh")
     public ResponseEntity<AuthToken> refresh(HttpServletRequest request, HttpServletResponse response) {
         return ResponseEntity.ok(adminService.refresh(request, response));
+    }
+
+    @PostMapping("/member/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response){
+        adminService.logout(request, response);
+        return ResponseEntity.ok("Logout ok");
     }
 }

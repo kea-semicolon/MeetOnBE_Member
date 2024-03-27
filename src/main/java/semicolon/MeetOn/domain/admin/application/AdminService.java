@@ -70,6 +70,43 @@ public class AdminService {
         return authToken;
     }
 
+    /**
+     * 로그아웃
+     * @param request
+     * @param response
+     */
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        String accessToken = getCookieValue("accessToken", request);
+        String refreshToken = getCookieValue("refreshToken", request);
+        if(accessToken != null){
+            CookieUtil.deleteCookie("accessToken", response);
+        }
+        if(refreshToken != null){
+            CookieUtil.deleteCookie("refreshToken", response);
+        }
+        CookieUtil.deleteCookie("memberId", response);
+        CookieUtil.deleteCookie("JSESSIONID", response);
+
+
+//        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+//        if(!adminRepository.existsById(Long.valueOf(authentication.getName()))){
+//            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+//        }
+//        if (authentication.isAuthenticated()) {
+//            CookieUtil.deleteCookie(accessToken, response);
+//            CookieUtil.deleteCookie("memberId", response);
+//            CookieUtil.deleteCookie("JSESSIONID", response);
+//        }
+//        String refreshToken = getCookieValue("refreshToken", request);
+//        if(!jwtTokenProvider.validateToken(refreshToken)){
+//            throw new BusinessLogicException(ExceptionCode.LOGOUT_MEMBER);
+//        }
+//        authentication = jwtTokenProvider.getAuthentication(accessToken);
+//        if (authentication.isAuthenticated()) {
+//            CookieUtil.deleteCookie(accessToken, response);
+//        }
+    }
+
     private String getCookieValue(String cookieName, HttpServletRequest request){
         Cookie cookie = CookieUtil.getCookie(request, cookieName);
         if(cookie == null){
