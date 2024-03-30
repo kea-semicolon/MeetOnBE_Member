@@ -1,11 +1,10 @@
-package semicolon.MeetOn.domain.admin.domain;
+package semicolon.MeetOn.domain.member.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import semicolon.MeetOn.domain.BaseTimeEntity;
 import semicolon.MeetOn.domain.channel.domain.Channel;
 import semicolon.MeetOn.global.OAuth.OAuthInfoResponse;
@@ -13,7 +12,7 @@ import semicolon.MeetOn.global.OAuth.OAuthInfoResponse;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Admin extends BaseTimeEntity {
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
@@ -30,7 +29,7 @@ public class Admin extends BaseTimeEntity {
     private Channel channel;
 
     @Builder
-    public Admin(Long id, String username, String email, Authority authority, Channel channel) {
+    public Member(Long id, String username, String email, Authority authority, Channel channel) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -38,8 +37,8 @@ public class Admin extends BaseTimeEntity {
         this.channel = channel;
     }
 
-    public static Admin toAdmin(OAuthInfoResponse oAuthInfoResponse) {
-        return Admin
+    public static Member toAdmin(OAuthInfoResponse oAuthInfoResponse) {
+        return Member
                 .builder()
                 .username(oAuthInfoResponse.getNickname())
                 .email(oAuthInfoResponse.getEmail())

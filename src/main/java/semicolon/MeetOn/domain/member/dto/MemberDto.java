@@ -1,12 +1,11 @@
-package semicolon.MeetOn.domain.admin.dto;
+package semicolon.MeetOn.domain.member.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import semicolon.MeetOn.domain.admin.domain.Admin;
 
-public class AdminDto {
+public class MemberDto {
     @Getter
     @NoArgsConstructor
     public static class AdminSaveRequestDto{

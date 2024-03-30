@@ -1,16 +1,16 @@
 package semicolon.MeetOn.global.jwt;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import semicolon.MeetOn.domain.admin.dto.AuthToken;
-import semicolon.MeetOn.global.util.CookieUtil;
+import semicolon.MeetOn.domain.member.domain.Authority;
+import semicolon.MeetOn.domain.member.dto.JwtToken;
 
 import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
-public class AuthTokensGenerator {
+public class JwtTokenGenerator {
 
     private static final String BEARER_TYPE = "Bearer";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
@@ -18,7 +18,7 @@ public class AuthTokensGenerator {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthToken generate(Long memberId) {
+    public JwtToken generate(Long memberId) {
         long now = (new Date()).getTime();
         Date accessTokenExpiredAt = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         Date refreshTokenExpiredAt = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
@@ -26,7 +26,7 @@ public class AuthTokensGenerator {
         String subject = memberId.toString();
         String accessToken = jwtTokenProvider.generate(subject, accessTokenExpiredAt);
         String refreshToken = jwtTokenProvider.generate(subject, refreshTokenExpiredAt);
-        return AuthToken.of(accessToken, refreshToken, BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME / 1000L);
+        return JwtToken.of(accessToken, refreshToken, BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME / 1000L);
     }
 
     public Long extractMemberId(String accessToken) {

@@ -12,7 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import semicolon.MeetOn.domain.admin.dto.AuthToken;
+import semicolon.MeetOn.domain.member.domain.Authority;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -35,8 +35,10 @@ public class JwtTokenProvider {
 
     //토큰 생성
     public String generate(String subject, Date expiredAt) {
+        log.info(subject);
         return Jwts.builder()
                 .setSubject(subject)
+                .claim(AUTHORITIES_KEY, Authority.ROLE_CLIENT)
                 .setExpiration(expiredAt)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();

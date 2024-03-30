@@ -1,36 +1,44 @@
-package semicolon.MeetOn.domain.admin.application;
+package semicolon.MeetOn.domain.member.application;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import semicolon.MeetOn.global.OAuth.OAuthInfoResponse;
 import semicolon.MeetOn.global.OAuth.OAuthLoginParams;
 import semicolon.MeetOn.global.OAuth.RequestOAuthInfoService;
-import semicolon.MeetOn.domain.admin.dao.AdminRepository;
-import semicolon.MeetOn.domain.admin.domain.Admin;
-import semicolon.MeetOn.domain.admin.dto.AuthToken;
+import semicolon.MeetOn.domain.member.dao.MemberRepository;
+import semicolon.MeetOn.domain.member.domain.Member;
+import semicolon.MeetOn.domain.member.dto.JwtToken;
 import semicolon.MeetOn.global.exception.BusinessLogicException;
 import semicolon.MeetOn.global.exception.code.ExceptionCode;
-import semicolon.MeetOn.global.jwt.AuthTokensGenerator;
+import semicolon.MeetOn.global.jwt.JwtTokenGenerator;
 import semicolon.MeetOn.global.jwt.JwtTokenProvider;
 import semicolon.MeetOn.global.util.CookieUtil;
 
-import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
+import static semicolon.MeetOn.global.exception.code.ExceptionCode.MEMBER_NOT_FOUND;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class AdminService {
+public class MemberService {
 
-    private final AdminRepository adminRepository;
-    private final AuthTokensGenerator authTokensGenerator;
+    private final MemberRepository memberRepository;
+    private final JwtTokenGenerator jwtTokenGenerator;
     private final RequestOAuthInfoService requestOAuthInfoService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManagerBuilder managerBuilder;
 
     /**
      * 로그인
@@ -38,12 +46,12 @@ public class AdminService {
      * @return
      */
     @Transactional
-    public AuthToken login(OAuthLoginParams params, HttpServletResponse response) {
+    public JwtToken login(OAuthLoginParams params, HttpServletResponse response) {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
         Long adminId = findOrCreateMember(oAuthInfoResponse);
-        AuthToken token = authTokensGenerator.generate(adminId);
-        CookieUtil.createCookie("accessToken", token.getRefreshToken(), response);
-        CookieUtil.createCookie("refreshToken", token.getAccessToken(), response);
+        JwtToken token = jwtTokenGenerator.generate(adminId);
+//        CookieUtil.createCookie("accessToken", token.getRefreshToken(), response);
+        CookieUtil.createCookie("refreshToken", token.getRefreshToken(), response);
         CookieUtil.createCookie("memberId", String.valueOf(adminId), response);
         return token;
     }
@@ -54,20 +62,20 @@ public class AdminService {
      * 여기 지금 쿠키에 access랑 refresh를 담고 있으니 프론트에서 쿠키 값 꺼내서 쓰고 access만 갱신하면 됨(refresh x)
      */
     @Transactional
-    public AuthToken refresh(HttpServletRequest request, HttpServletResponse response) {
+    public JwtToken refresh(HttpServletRequest request, HttpServletResponse response) {
         String accessToken = getCookieValue("accessToken", request);
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-        if(!adminRepository.existsById(Long.valueOf(authentication.getName()))){
-            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+        if(!memberRepository.existsById(Long.valueOf(authentication.getName()))){
+            throw new BusinessLogicException(MEMBER_NOT_FOUND);
         }
 
         String refreshToken = getCookieValue("refreshToken", request);
         if(!jwtTokenProvider.validateToken(refreshToken)){
             throw new BusinessLogicException(ExceptionCode.LOGOUT_MEMBER);
         }
-        AuthToken authToken = authTokensGenerator.generate(Long.valueOf(authentication.getName()));
-        CookieUtil.createCookie("accessToken", authToken.getAccessToken(), response);
-        return authToken;
+        JwtToken jwtToken = jwtTokenGenerator.generate(Long.valueOf(authentication.getName()));
+        CookieUtil.createCookie("accessToken", jwtToken.getAccessToken(), response);
+        return jwtToken;
     }
 
     /**
@@ -107,6 +115,17 @@ public class AdminService {
 //        }
     }
 
+    @Transactional
+    public void deactivate(HttpServletRequest request, HttpServletResponse response) {
+        long memberId = Long.parseLong(getCookieValue("memberId", request));
+        Member member =
+                memberRepository.findById(memberId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
+        memberRepository.delete(member);
+        CookieUtil.deleteCookie("JSESSIONID", response);
+        CookieUtil.deleteCookie("refreshToken", response);
+        CookieUtil.deleteCookie("memberId", response);
+    }
+
     private String getCookieValue(String cookieName, HttpServletRequest request){
         Cookie cookie = CookieUtil.getCookie(request, cookieName);
         if(cookie == null){
@@ -115,12 +134,17 @@ public class AdminService {
         return cookie.getValue();
     }
 
+    /**
+     * 디폴트 채널을 null이 아닌 1번으로 변경 -> 채널 없는 유저를 모을 수 있는 채널을 생성(쓰레기 값?)
+     * @param oAuthInfoResponse
+     * @return
+     */
     private Long findOrCreateMember(OAuthInfoResponse oAuthInfoResponse) {
-        Optional<Admin> findAdmin = adminRepository.findByEmail(oAuthInfoResponse.getEmail());
+        Optional<Member> findAdmin = memberRepository.findByEmail(oAuthInfoResponse.getEmail());
         if(findAdmin.isEmpty()){
-            Admin admin = Admin.toAdmin(oAuthInfoResponse);
-            adminRepository.save(admin);
-            return admin.getId();
+            Member member = Member.toAdmin(oAuthInfoResponse);
+            memberRepository.save(member);
+            return member.getId();
         }
         return findAdmin.get().getId();
     }

@@ -39,7 +39,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(
                         (authorizeRequests) -> authorizeRequests
                                 .requestMatchers("/oauth/**").permitAll()
-                                .requestMatchers("/member/**").permitAll()
+                                //.requestMatchers("/member/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling((exceptionConfig) -> exceptionConfig.authenticationEntryPoint(jwtAuthenticationEntryPoint)

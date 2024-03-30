@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import semicolon.MeetOn.domain.BaseTimeEntity;
-import semicolon.MeetOn.domain.admin.domain.Admin;
+import semicolon.MeetOn.domain.member.domain.Member;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +19,12 @@ public class Channel extends BaseTimeEntity {
     private Long id;
 
     @OneToMany(mappedBy = "channel")
-    private List<Admin> adminList = new ArrayList<>();
+    private List<Member> memberList = new ArrayList<>();
 
     @Builder
-    public Channel(Long id, List<Admin> adminList) {
+    public Channel(Long id, List<Member> memberList) {
         this.id = id;
-        this.adminList = adminList;
+        this.memberList = memberList;
     }
 
     public static Channel defaultChannel(){
