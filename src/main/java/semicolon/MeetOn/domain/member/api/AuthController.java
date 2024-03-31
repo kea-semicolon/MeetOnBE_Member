@@ -25,12 +25,11 @@ public class AuthController {
      * @return
      */
     @PostMapping("/oauth/callback/kakao")
-    public ResponseEntity<JwtToken> callBack(@RequestBody KakaoLoginParams authorizationCode,
+    public ResponseEntity<JwtToken> login(@RequestBody KakaoLoginParams authorizationCode,
                                              HttpServletResponse response) {
         log.info("code={}", authorizationCode.getAuthorizationCode());
         JwtToken token = memberService.login(authorizationCode, response);
         log.info("accessToken={}", token.getAccessToken());
-        log.info("refreshToken={}", token.getRefreshToken());
         return ResponseEntity.ok(token);
     }
 }

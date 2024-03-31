@@ -4,25 +4,21 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import semicolon.MeetOn.domain.member.domain.Member;
 
 public class MemberDto {
-    @Getter
-    @NoArgsConstructor
-    public static class AdminSaveRequestDto{
-        @NotBlank(message = "닉네임을 설정해주세요.")
-        private String username;
-        @NotBlank(message = "이메일을 확인해주세요.")
-        private String email;
 
-        @Builder
-        public AdminSaveRequestDto(String username, String email) {
-            this.username = username;
-            this.email = email;
-        }
-        public static AdminSaveRequestDto of(String email, String username){
-            return AdminSaveRequestDto.builder()
-                    .username(username)
-                    .email(email)
+    @Getter
+    @Builder
+    public static class MemberInfoDto {
+        private String userNickname;
+        private String userImage;
+
+        public static MemberInfoDto toMemberInfoDto(Member member) {
+            return MemberInfoDto
+                    .builder()
+                    .userNickname(member.getUsername())
+                    .userImage(member.getUserImage())
                     .build();
         }
     }

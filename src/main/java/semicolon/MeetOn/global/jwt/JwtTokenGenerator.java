@@ -21,12 +21,16 @@ public class JwtTokenGenerator {
     public JwtToken generate(Long memberId) {
         long now = (new Date()).getTime();
         Date accessTokenExpiredAt = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
-        Date refreshTokenExpiredAt = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
-
         String subject = memberId.toString();
         String accessToken = jwtTokenProvider.generate(subject, accessTokenExpiredAt);
-        String refreshToken = jwtTokenProvider.generate(subject, refreshTokenExpiredAt);
-        return JwtToken.of(accessToken, refreshToken, BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME / 1000L);
+        return JwtToken.of(accessToken, BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME / 1000L);
+    }
+
+    public String generateRefreshToken(Long memberId) {
+        long now = (new Date()).getTime();
+        String subject = memberId.toString();
+        Date refreshTokenExpiredAt = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
+        return jwtTokenProvider.generate(subject, refreshTokenExpiredAt);
     }
 
     public Long extractMemberId(String accessToken) {

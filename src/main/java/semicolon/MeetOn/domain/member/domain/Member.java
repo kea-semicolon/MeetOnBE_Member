@@ -21,6 +21,9 @@ public class Member extends BaseTimeEntity {
     private String username;
     @NotBlank
     private String email;
+
+    private String userImage;
+
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
@@ -29,10 +32,11 @@ public class Member extends BaseTimeEntity {
     private Channel channel;
 
     @Builder
-    public Member(Long id, String username, String email, Authority authority, Channel channel) {
+    public Member(Long id, String username, String email, String userImage, Authority authority, Channel channel) {
         this.id = id;
         this.username = username;
         this.email = email;
+        this.userImage = userImage;
         this.authority = authority;
         this.channel = channel;
     }

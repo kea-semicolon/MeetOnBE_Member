@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import semicolon.MeetOn.domain.member.dto.MemberDto;
 import semicolon.MeetOn.global.OAuth.OAuthInfoResponse;
 import semicolon.MeetOn.global.OAuth.OAuthLoginParams;
 import semicolon.MeetOn.global.OAuth.RequestOAuthInfoService;
@@ -26,6 +27,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static semicolon.MeetOn.domain.member.dto.MemberDto.*;
 import static semicolon.MeetOn.global.exception.code.ExceptionCode.MEMBER_NOT_FOUND;
 
 @Slf4j
@@ -48,11 +50,12 @@ public class MemberService {
     @Transactional
     public JwtToken login(OAuthLoginParams params, HttpServletResponse response) {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
-        Long adminId = findOrCreateMember(oAuthInfoResponse);
-        JwtToken token = jwtTokenGenerator.generate(adminId);
+        Long memberId = findOrCreateMember(oAuthInfoResponse);
+        JwtToken token = jwtTokenGenerator.generate(memberId);
+        String refreshToken = jwtTokenGenerator.generateRefreshToken(memberId);
 //        CookieUtil.createCookie("accessToken", token.getRefreshToken(), response);
-        CookieUtil.createCookie("refreshToken", token.getRefreshToken(), response);
-        CookieUtil.createCookie("memberId", String.valueOf(adminId), response);
+        CookieUtil.createCookie("refreshToken", refreshToken, response);
+        CookieUtil.createCookie("memberId", String.valueOf(memberId), response);
         return token;
     }
 
@@ -63,18 +66,14 @@ public class MemberService {
      */
     @Transactional
     public JwtToken refresh(HttpServletRequest request, HttpServletResponse response) {
-        String accessToken = getCookieValue("accessToken", request);
-        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-        if(!memberRepository.existsById(Long.valueOf(authentication.getName()))){
-            throw new BusinessLogicException(MEMBER_NOT_FOUND);
-        }
-
         String refreshToken = getCookieValue("refreshToken", request);
+        String memberId = getCookieValue("memberId", request);
         if(!jwtTokenProvider.validateToken(refreshToken)){
             throw new BusinessLogicException(ExceptionCode.LOGOUT_MEMBER);
         }
-        JwtToken jwtToken = jwtTokenGenerator.generate(Long.valueOf(authentication.getName()));
-        CookieUtil.createCookie("accessToken", jwtToken.getAccessToken(), response);
+        JwtToken jwtToken = jwtTokenGenerator.generate(Long.valueOf(memberId));
+        refreshToken = jwtTokenGenerator.generateRefreshToken(Long.valueOf(memberId));
+        CookieUtil.createCookie("refreshToken", refreshToken, response);
         return jwtToken;
     }
 
@@ -84,11 +83,7 @@ public class MemberService {
      * @param response
      */
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-        String accessToken = getCookieValue("accessToken", request);
         String refreshToken = getCookieValue("refreshToken", request);
-        if(accessToken != null){
-            CookieUtil.deleteCookie("accessToken", response);
-        }
         if(refreshToken != null){
             CookieUtil.deleteCookie("refreshToken", response);
         }
@@ -124,6 +119,14 @@ public class MemberService {
         CookieUtil.deleteCookie("JSESSIONID", response);
         CookieUtil.deleteCookie("refreshToken", response);
         CookieUtil.deleteCookie("memberId", response);
+    }
+
+
+    public MemberInfoDto userInfo(HttpServletRequest request) {
+        long memberId = Long.parseLong(getCookieValue("memberId", request));
+        Member member =
+                memberRepository.findById(memberId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
+        return MemberInfoDto.toMemberInfoDto(member);
     }
 
     private String getCookieValue(String cookieName, HttpServletRequest request){
