@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import semicolon.MeetOn.domain.member.application.MemberService;
@@ -12,6 +13,7 @@ import semicolon.MeetOn.domain.member.dto.MemberDto;
 
 import static semicolon.MeetOn.domain.member.dto.MemberDto.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
@@ -50,8 +52,22 @@ public class MemberController {
         return ResponseEntity.ok("Ok");
     }
 
+    /**
+     * 유저 정보 가져오기(이름, 프로필 이미지)
+     * @param request
+     * @return
+     */
     @GetMapping("/info")
     public ResponseEntity<MemberInfoDto> userInfo(HttpServletRequest request) {
         return ResponseEntity.ok(memberService.userInfo(request));
+    }
+
+    /**
+     * 유저 정보 업데이트
+     */
+    @PatchMapping("/info-change")
+    public ResponseEntity<String> userInfoUpdate(@RequestBody MemberInfoDto updateMemberInfo, HttpServletRequest request) {
+        memberService.updateUserInfo(updateMemberInfo, request);
+        return ResponseEntity.ok("Ok");
     }
 }

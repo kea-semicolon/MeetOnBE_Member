@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import semicolon.MeetOn.domain.BaseTimeEntity;
 import semicolon.MeetOn.domain.channel.domain.Channel;
+import semicolon.MeetOn.domain.member.dto.MemberDto;
 import semicolon.MeetOn.global.OAuth.OAuthInfoResponse;
 
 @Getter
@@ -48,5 +49,10 @@ public class Member extends BaseTimeEntity {
                 .email(oAuthInfoResponse.getEmail())
                 .authority(Authority.ROLE_CLIENT)
                 .build();
+    }
+
+    public void updateInfo(MemberDto.MemberInfoDto updateMemberInfo) {
+        this.username = updateMemberInfo.getUserNickname();
+        this.userImage = updateMemberInfo.getUserImage();
     }
 }

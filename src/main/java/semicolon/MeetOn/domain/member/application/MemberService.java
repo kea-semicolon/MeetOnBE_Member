@@ -89,27 +89,13 @@ public class MemberService {
         }
         CookieUtil.deleteCookie("memberId", response);
         CookieUtil.deleteCookie("JSESSIONID", response);
-
-
-//        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-//        if(!adminRepository.existsById(Long.valueOf(authentication.getName()))){
-//            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
-//        }
-//        if (authentication.isAuthenticated()) {
-//            CookieUtil.deleteCookie(accessToken, response);
-//            CookieUtil.deleteCookie("memberId", response);
-//            CookieUtil.deleteCookie("JSESSIONID", response);
-//        }
-//        String refreshToken = getCookieValue("refreshToken", request);
-//        if(!jwtTokenProvider.validateToken(refreshToken)){
-//            throw new BusinessLogicException(ExceptionCode.LOGOUT_MEMBER);
-//        }
-//        authentication = jwtTokenProvider.getAuthentication(accessToken);
-//        if (authentication.isAuthenticated()) {
-//            CookieUtil.deleteCookie(accessToken, response);
-//        }
     }
 
+    /**
+     * 탈퇴
+     * @param request
+     * @param response
+     */
     @Transactional
     public void deactivate(HttpServletRequest request, HttpServletResponse response) {
         long memberId = Long.parseLong(getCookieValue("memberId", request));
@@ -121,12 +107,29 @@ public class MemberService {
         CookieUtil.deleteCookie("memberId", response);
     }
 
-
+    /**
+     * 유저 정보
+     * @param request
+     * @return
+     */
     public MemberInfoDto userInfo(HttpServletRequest request) {
         long memberId = Long.parseLong(getCookieValue("memberId", request));
         Member member =
                 memberRepository.findById(memberId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
         return MemberInfoDto.toMemberInfoDto(member);
+    }
+
+    /**
+     * 유저 정보 수정
+     * @param updateMemberInfo
+     * @param request
+     */
+    @Transactional
+    public void updateUserInfo(MemberInfoDto updateMemberInfo, HttpServletRequest request) {
+        long memberId = Long.parseLong(getCookieValue("memberId", request));
+        Member member =
+                memberRepository.findById(memberId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
+        member.updateInfo(updateMemberInfo);
     }
 
     private String getCookieValue(String cookieName, HttpServletRequest request){
