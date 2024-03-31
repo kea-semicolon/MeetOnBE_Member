@@ -35,7 +35,6 @@ public class JwtTokenProvider {
 
     //토큰 생성
     public String generate(String subject, Date expiredAt) {
-        log.info(subject);
         return Jwts.builder()
                 .setSubject(subject)
                 .claim(AUTHORITIES_KEY, Authority.ROLE_CLIENT)
