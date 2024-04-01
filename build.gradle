@@ -47,6 +47,9 @@ dependencies {
 
 	//test
 	testImplementation 'org.assertj:assertj-core:3.20.2'
+
+	//Spring webClient
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 dependencyManagement {

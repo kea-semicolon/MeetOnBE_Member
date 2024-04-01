@@ -1,6 +1,7 @@
 package semicolon.MeetOn.global.OAuth;
 
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
@@ -18,9 +19,9 @@ public class RequestOAuthInfoService {
         );
     }
 
-    public OAuthInfoResponse request(OAuthLoginParams params) {
+    public Mono<OAuthInfoResponse> request(OAuthLoginParams params) {
         OAuthApiClient client = clients.get(params.oAuthProvider());
-        String accessToken = client.requestAccessToken(params);
-        return client.requestOauthInfo(accessToken);
+        return client.requestAccessToken(params)
+                .flatMap(accessToken -> client.requestOauthInfo(accessToken));
     }
 }

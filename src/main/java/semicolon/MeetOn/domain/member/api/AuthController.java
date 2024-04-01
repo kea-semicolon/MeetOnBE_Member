@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 import semicolon.MeetOn.domain.member.application.AuthService;
 import semicolon.MeetOn.domain.member.application.MemberService;
 import semicolon.MeetOn.global.OAuth.kakao.KakaoLoginParams;
@@ -26,11 +27,13 @@ public class AuthController {
      * @return
      */
     @PostMapping("/oauth/callback/kakao")
-    public ResponseEntity<JwtToken> login(@RequestBody KakaoLoginParams authorizationCode,
-                                             HttpServletResponse response) {
+    public Mono<ResponseEntity<JwtToken>> login(@RequestBody KakaoLoginParams authorizationCode,
+                                                HttpServletResponse response) {
         log.info("code={}", authorizationCode.getAuthorizationCode());
-        JwtToken token = authService.login(authorizationCode, response);
-        log.info("accessToken={}", token.getAccessToken());
-        return ResponseEntity.ok(token);
+        return authService.login(authorizationCode, response)
+                .map(token -> {
+                    log.info("accessToken={}", token.getAccessToken());
+                    return ResponseEntity.ok(token);
+                });
     }
 }

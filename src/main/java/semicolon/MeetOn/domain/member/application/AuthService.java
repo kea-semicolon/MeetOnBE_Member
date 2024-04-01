@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 import semicolon.MeetOn.domain.member.dao.MemberRepository;
 import semicolon.MeetOn.domain.member.domain.Member;
 import semicolon.MeetOn.domain.member.dto.JwtToken;
@@ -31,15 +32,16 @@ public class AuthService {
      * @return
      */
     @Transactional
-    public JwtToken login(OAuthLoginParams params, HttpServletResponse response) {
-        OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
-        Long memberId = findOrCreateMember(oAuthInfoResponse);
-        JwtToken token = jwtTokenGenerator.generate(memberId);
-        String refreshToken = jwtTokenGenerator.generateRefreshToken(memberId);
-//        CookieUtil.createCookie("accessToken", token.getRefreshToken(), response);
-        CookieUtil.createCookie("refreshToken", refreshToken, response);
-        CookieUtil.createCookie("memberId", String.valueOf(memberId), response);
-        return token;
+    public Mono<JwtToken> login(OAuthLoginParams params, HttpServletResponse response) {
+        return requestOAuthInfoService.request(params)
+                .flatMap(oAuthInfoResponse -> {
+                    Long memberId = findOrCreateMember(oAuthInfoResponse);
+                    JwtToken token = jwtTokenGenerator.generate(memberId);
+                    String refreshToken = jwtTokenGenerator.generateRefreshToken(memberId);
+                    CookieUtil.createCookie("refreshToken", refreshToken, response);
+                    CookieUtil.createCookie("memberId", String.valueOf(memberId), response);
+                    return Mono.just(token);
+                });
     }
 
     /**

@@ -31,7 +31,7 @@ public class AuthServiceTest {
     @Test
     void 로그인_성공() {
         KakaoLoginParams params = new KakaoLoginParams("BnvI_fasKTSa-r5uZkkwEeoHq00FQ60X7BD0gykuv6gespn4t4vE4M8oiMUKPXWaAAABjo7WYzuGtS2__sNdBQ");
-        JwtToken login = authService.login(params, response);
+        JwtToken login = authService.login(params, response).block();
         Long id = jwtTokenGenerator.extractMemberId(login.getAccessToken());
 
         assertThat(id).isNotNull();

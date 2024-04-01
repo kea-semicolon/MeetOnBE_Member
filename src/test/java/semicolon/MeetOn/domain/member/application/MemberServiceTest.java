@@ -1,29 +1,20 @@
 package semicolon.MeetOn.domain.member.application;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.mock.web.MockCookie;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import semicolon.MeetOn.domain.channel.dao.ChannelRepository;
 import semicolon.MeetOn.domain.channel.domain.Channel;
 import semicolon.MeetOn.domain.member.dao.MemberRepository;
 import semicolon.MeetOn.domain.member.domain.Member;
-import semicolon.MeetOn.domain.member.dto.JwtToken;
-import semicolon.MeetOn.domain.member.dto.MemberDto;
-import semicolon.MeetOn.global.OAuth.kakao.KakaoLoginParams;
-import semicolon.MeetOn.global.exception.BusinessLogicException;
 import semicolon.MeetOn.global.jwt.JwtTokenGenerator;
 import semicolon.MeetOn.global.jwt.JwtTokenProvider;
 
@@ -79,7 +70,6 @@ class MemberServiceTest {
             request.setCookies(cookies);
         }
     }
-
 
     @Test
     void 멤버_탈퇴_성공() {
