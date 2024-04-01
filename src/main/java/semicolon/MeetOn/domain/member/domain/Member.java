@@ -9,6 +9,8 @@ import semicolon.MeetOn.domain.BaseTimeEntity;
 import semicolon.MeetOn.domain.member.dto.MemberDto;
 import semicolon.MeetOn.global.OAuth.OAuthInfoResponse;
 
+import static semicolon.MeetOn.domain.member.dto.MemberDto.*;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -54,9 +56,15 @@ public class Member extends BaseTimeEntity {
                 .build();
     }
 
-    public void updateInfo(MemberDto.MemberInfoDto updateMemberInfo) {
+    public void updateInfo(MemberInfoDto updateMemberInfo) {
         this.username = updateMemberInfo.getUserNickname();
         this.userImage = updateMemberInfo.getUserImage();
+    }
+
+    public void updateChannelCreate(MemberInfoDto updateMemberInfo) {
+        this.username = updateMemberInfo.getUserNickname();
+        this.userImage = updateMemberInfo.getUserImage();
+        this.authority = updateMemberInfo.getAuthority();
     }
 
     public void exitChannel() {
