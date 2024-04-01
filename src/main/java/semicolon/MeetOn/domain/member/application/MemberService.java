@@ -38,26 +38,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final JwtTokenGenerator jwtTokenGenerator;
-    private final RequestOAuthInfoService requestOAuthInfoService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final AuthenticationManagerBuilder managerBuilder;
-
-    /**
-     * 로그인
-     * @param params
-     * @return
-     */
-    @Transactional
-    public JwtToken login(OAuthLoginParams params, HttpServletResponse response) {
-        OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
-        Long memberId = findOrCreateMember(oAuthInfoResponse);
-        JwtToken token = jwtTokenGenerator.generate(memberId);
-        String refreshToken = jwtTokenGenerator.generateRefreshToken(memberId);
-//        CookieUtil.createCookie("accessToken", token.getRefreshToken(), response);
-        CookieUtil.createCookie("refreshToken", refreshToken, response);
-        CookieUtil.createCookie("memberId", String.valueOf(memberId), response);
-        return token;
-    }
 
     /**
      * AccessToken 재발급
@@ -92,16 +73,13 @@ public class MemberService {
     }
 
     /**
-     * 탈퇴
+     * 탈퇴 -> MSA이기 때문에 각 서버에 삭제 API를 끌어와서 해당 유저와 연관된 1:N 데이터 모두 삭제
      * @param request
      * @param response
      */
     @Transactional
     public void deactivate(HttpServletRequest request, HttpServletResponse response) {
-        long memberId = Long.parseLong(getCookieValue("memberId", request));
-        Member member =
-                memberRepository.findById(memberId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
-        memberRepository.delete(member);
+        memberRepository.delete(findMember(request));
         CookieUtil.deleteCookie("JSESSIONID", response);
         CookieUtil.deleteCookie("refreshToken", response);
         CookieUtil.deleteCookie("memberId", response);
@@ -113,10 +91,7 @@ public class MemberService {
      * @return
      */
     public MemberInfoDto userInfo(HttpServletRequest request) {
-        long memberId = Long.parseLong(getCookieValue("memberId", request));
-        Member member =
-                memberRepository.findById(memberId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
-        return MemberInfoDto.toMemberInfoDto(member);
+        return MemberInfoDto.toMemberInfoDto(findMember(request));
     }
 
     /**
@@ -126,12 +101,25 @@ public class MemberService {
      */
     @Transactional
     public void updateUserInfo(MemberInfoDto updateMemberInfo, HttpServletRequest request) {
-        long memberId = Long.parseLong(getCookieValue("memberId", request));
-        Member member =
-                memberRepository.findById(memberId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
-        member.updateInfo(updateMemberInfo);
+        findMember(request).updateInfo(updateMemberInfo);
     }
 
+    /**
+     * 채널 나가기 -> 연관 채널 null로 변경 or default 채널로 변경(아마 후자?)
+     * MSA이기 때문에 각 서버에 삭제 API를 끌어와서 해당 유저와 연관된 1:N 데이터 모두 삭제(메모 제외)
+     * @param request
+     */
+    @Transactional
+    public void exitChannel(HttpServletRequest request) {
+        findMember(request).exitChannel();
+    }
+
+    /**
+     * 쿠키 이름으로 쿠키 값 가져오기 -> 없으면 INVALID_REQUEST 예외 처리
+     * @param cookieName
+     * @param request
+     * @return
+     */
     private String getCookieValue(String cookieName, HttpServletRequest request){
         Cookie cookie = CookieUtil.getCookie(request, cookieName);
         if(cookie == null){
@@ -141,17 +129,12 @@ public class MemberService {
     }
 
     /**
-     * 디폴트 채널을 null이 아닌 1번으로 변경 -> 채널 없는 유저를 모을 수 있는 채널을 생성(쓰레기 값?)
-     * @param oAuthInfoResponse
+     * MemberId로 Member 찾기 -> 없으면 MEMBER_NOT_FOUND 예외 처리
+     * @param request
      * @return
      */
-    private Long findOrCreateMember(OAuthInfoResponse oAuthInfoResponse) {
-        Optional<Member> findAdmin = memberRepository.findByEmail(oAuthInfoResponse.getEmail());
-        if(findAdmin.isEmpty()){
-            Member member = Member.toAdmin(oAuthInfoResponse);
-            memberRepository.save(member);
-            return member.getId();
-        }
-        return findAdmin.get().getId();
+    private Member findMember(HttpServletRequest request) {
+        long memberId = Long.parseLong(getCookieValue("memberId", request));
+        return memberRepository.findById(memberId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
     }
 }

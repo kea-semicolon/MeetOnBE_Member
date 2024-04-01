@@ -16,6 +16,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import semicolon.MeetOn.domain.channel.dao.ChannelRepository;
+import semicolon.MeetOn.domain.channel.domain.Channel;
 import semicolon.MeetOn.domain.member.dao.MemberRepository;
 import semicolon.MeetOn.domain.member.domain.Member;
 import semicolon.MeetOn.domain.member.dto.JwtToken;
@@ -49,13 +51,23 @@ class MemberServiceTest {
     @Autowired
     JwtTokenProvider jwtTokenProvider;
 
+    /**
+     * 채널을 MSA 빼면 API 통신을 통해 Channel 정보하나 받아서 sample 데이터 저장
+     */
+    @Autowired
+    ChannelRepository channelRepository;
+
     MockHttpServletResponse response;
     MockHttpServletRequest request;
     @BeforeEach
     void 쿠키_세팅() {
+        //샘플 채널
+        Channel channel = new Channel();
+        channelRepository.save(channel);
+
         response = new MockHttpServletResponse();
         request = new MockHttpServletRequest();
-        Member member = Member.builder().username("test").build();
+        Member member = Member.builder().username("test").channel(channel).build();
         Member save = memberRepository.save(member);
         long memberId = save.getId();
         log.info("save memberId = {} ", memberId + "");
@@ -67,17 +79,7 @@ class MemberServiceTest {
             request.setCookies(cookies);
         }
     }
-    /**
-     * 인가 코드는 알아서 받아야함
-     */
-    @Test
-    void 로그인_성공() {
-        KakaoLoginParams params = new KakaoLoginParams("BnvI_fasKTSa-r5uZkkwEeoHq00FQ60X7BD0gykuv6gespn4t4vE4M8oiMUKPXWaAAABjo7WYzuGtS2__sNdBQ");
-        JwtToken login = memberService.login(params, response);
-        Long id = jwtTokenGenerator.extractMemberId(login.getAccessToken());
 
-        assertThat(id).isNotNull();
-    }
 
     @Test
     void 멤버_탈퇴_성공() {
@@ -93,20 +95,25 @@ class MemberServiceTest {
 
     @Test
     void 멤버_정보가져오기_성공() {
-        long memberId = Long.parseLong(Objects.requireNonNull(response.getCookie("memberId")).getValue());
-        Member member = memberRepository.findById(memberId).get();
+        Member member = findMember();
         MemberInfoDto memberInfoDto = memberService.userInfo(request);
         assertThat(memberInfoDto.getUserNickname()).isEqualTo(member.getUsername());
     }
 
     @Test
     void 멤버_정보_수정_성공() {
-        long memberId = Long.parseLong(Objects.requireNonNull(response.getCookie("memberId")).getValue());
-        Member member = memberRepository.findById(memberId).get();
+        Member member = findMember();
         String beforeName = member.getUsername();
         MemberInfoDto memberInfoDto = MemberInfoDto.builder().userImage("change").userNickname("change").build();
         memberService.updateUserInfo(memberInfoDto, request);
         assertThat(member.getUsername()).isNotEqualTo(beforeName);
+    }
+
+    @Test
+    void 멤버_채널_탈퇴_성공() {
+        Member member = findMember();
+        memberService.exitChannel(request);
+        assertThat(member.getChannel()).isNull();
     }
 
     private MockCookie createCookie(String name, String value) {
@@ -114,5 +121,10 @@ class MemberServiceTest {
         mockCookie.setPath("/");
         mockCookie.setHttpOnly(true);
         return mockCookie;
+    }
+
+    private Member findMember() {
+        long memberId = Long.parseLong(Objects.requireNonNull(response.getCookie("memberId")).getValue());
+        return memberRepository.findById(memberId).get();
     }
 }

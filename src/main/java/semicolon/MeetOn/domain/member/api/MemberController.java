@@ -70,4 +70,13 @@ public class MemberController {
         memberService.updateUserInfo(updateMemberInfo, request);
         return ResponseEntity.ok("Ok");
     }
+
+    /**
+     * 채널 나가기
+     */
+    @PatchMapping("/exit-channel")
+    public ResponseEntity<String> userExitChannel(HttpServletRequest request) {
+        memberService.exitChannel(request);
+        return ResponseEntity.ok("Ok");
+    }
 }

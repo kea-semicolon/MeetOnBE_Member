@@ -55,4 +55,8 @@ public class Member extends BaseTimeEntity {
         this.username = updateMemberInfo.getUserNickname();
         this.userImage = updateMemberInfo.getUserImage();
     }
+
+    public void exitChannel() {
+        this.channel = null;
+    }
 }
