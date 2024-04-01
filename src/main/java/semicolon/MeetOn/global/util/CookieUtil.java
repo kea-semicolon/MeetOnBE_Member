@@ -3,6 +3,8 @@ package semicolon.MeetOn.global.util;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import semicolon.MeetOn.global.exception.BusinessLogicException;
+import semicolon.MeetOn.global.exception.code.ExceptionCode;
 
 public class CookieUtil {
 
@@ -21,6 +23,21 @@ public class CookieUtil {
         cookie.setMaxAge(1000 * 60 * 60 * 24 * 7);
         response.addCookie(cookie);
     }
+
+    /**
+     * 쿠키 이름으로 쿠키 값 가져오기 -> 없으면 INVALID_REQUEST 예외 처리
+     * @param cookieName
+     * @param request
+     * @return
+     */
+    public static String getCookieValue(String cookieName, HttpServletRequest request){
+        Cookie cookie = CookieUtil.getCookie(request, cookieName);
+        if(cookie == null){
+            throw new BusinessLogicException(ExceptionCode.INVALID_REQUEST);
+        }
+        return cookie.getValue();
+    }
+
 
     /**
      * 쿠키 정보 가져오기

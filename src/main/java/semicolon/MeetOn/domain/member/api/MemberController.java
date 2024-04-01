@@ -2,7 +2,6 @@ package semicolon.MeetOn.domain.member.api;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import semicolon.MeetOn.domain.member.application.MemberService;
 import semicolon.MeetOn.domain.member.dto.JwtToken;
 import semicolon.MeetOn.domain.member.dto.MemberDto;
+
+import java.util.List;
 
 import static semicolon.MeetOn.domain.member.dto.MemberDto.*;
 
@@ -78,5 +79,13 @@ public class MemberController {
     public ResponseEntity<String> userExitChannel(HttpServletRequest request) {
         memberService.exitChannel(request);
         return ResponseEntity.ok("Ok");
+    }
+
+    /**
+     * 채널 유저 리스트
+     */
+    @GetMapping("")
+    public ResponseEntity<List<MemberDto.MemberInfoDto>> channelUserList(HttpServletRequest request) {
+        return ResponseEntity.ok(memberService.channelUserList(request));
     }
 }

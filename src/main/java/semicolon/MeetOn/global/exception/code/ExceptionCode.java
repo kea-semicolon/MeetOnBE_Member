@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ExceptionCode {
+    CHANNEL_NOT_FOUND(404, "Channel Not Found"),
     MEMBER_NOT_FOUND(404, "Member Not Found"),
     LOGOUT_MEMBER(404, "Member Already Logout"),
     ADMIN_DUPLICATED(404, "Admin Duplicated"),

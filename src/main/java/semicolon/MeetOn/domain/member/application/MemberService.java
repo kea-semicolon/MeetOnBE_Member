@@ -23,9 +23,12 @@ import semicolon.MeetOn.global.jwt.JwtTokenGenerator;
 import semicolon.MeetOn.global.jwt.JwtTokenProvider;
 import semicolon.MeetOn.global.util.CookieUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import static semicolon.MeetOn.domain.member.dto.MemberDto.*;
 import static semicolon.MeetOn.global.exception.code.ExceptionCode.MEMBER_NOT_FOUND;
@@ -47,8 +50,8 @@ public class MemberService {
      */
     @Transactional
     public JwtToken refresh(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = getCookieValue("refreshToken", request);
-        String memberId = getCookieValue("memberId", request);
+        String refreshToken = CookieUtil.getCookieValue("refreshToken", request);
+        String memberId = CookieUtil.getCookieValue("memberId", request);
         if(!jwtTokenProvider.validateToken(refreshToken)){
             throw new BusinessLogicException(ExceptionCode.LOGOUT_MEMBER);
         }
@@ -64,7 +67,7 @@ public class MemberService {
      * @param response
      */
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = getCookieValue("refreshToken", request);
+        String refreshToken = CookieUtil.getCookieValue("refreshToken", request);
         if(refreshToken != null){
             CookieUtil.deleteCookie("refreshToken", response);
         }
@@ -115,17 +118,15 @@ public class MemberService {
     }
 
     /**
-     * 쿠키 이름으로 쿠키 값 가져오기 -> 없으면 INVALID_REQUEST 예외 처리
-     * @param cookieName
+     * 채널에 속해있는 유저 정보 리스트
      * @param request
      * @return
      */
-    private String getCookieValue(String cookieName, HttpServletRequest request){
-        Cookie cookie = CookieUtil.getCookie(request, cookieName);
-        if(cookie == null){
-            throw new BusinessLogicException(ExceptionCode.INVALID_REQUEST);
-        }
-        return cookie.getValue();
+    public List<MemberDto.MemberInfoDto> channelUserList(HttpServletRequest request) {
+        Long channelId = Long.valueOf(CookieUtil.getCookieValue("channelId", request));
+        return memberRepository.findByChannelId(channelId).stream()
+                .map(MemberInfoDto::toMemberInfoIdDto)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -134,7 +135,7 @@ public class MemberService {
      * @return
      */
     private Member findMember(HttpServletRequest request) {
-        long memberId = Long.parseLong(getCookieValue("memberId", request));
+        long memberId = Long.parseLong(CookieUtil.getCookieValue("memberId", request));
         return memberRepository.findById(memberId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
     }
 }

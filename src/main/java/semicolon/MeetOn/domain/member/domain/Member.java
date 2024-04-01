@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import semicolon.MeetOn.domain.BaseTimeEntity;
-import semicolon.MeetOn.domain.channel.domain.Channel;
 import semicolon.MeetOn.domain.member.dto.MemberDto;
 import semicolon.MeetOn.global.OAuth.OAuthInfoResponse;
 
@@ -18,8 +17,10 @@ public class Member extends BaseTimeEntity {
     @Id
     @GeneratedValue
     private Long id;
+
     @NotBlank
     private String username;
+
     @NotBlank
     private String email;
 
@@ -28,18 +29,19 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "channel_id")
-    private Channel channel;
+    private Long channelId;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "channel_id")
+//    private Channel channel;
 
     @Builder
-    public Member(Long id, String username, String email, String userImage, Authority authority, Channel channel) {
+    public Member(Long id, String username, String email, String userImage, Authority authority, Long channelId) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.userImage = userImage;
         this.authority = authority;
-        this.channel = channel;
+        this.channelId = channelId;
     }
 
     public static Member toAdmin(OAuthInfoResponse oAuthInfoResponse) {
@@ -48,6 +50,7 @@ public class Member extends BaseTimeEntity {
                 .username(oAuthInfoResponse.getNickname())
                 .email(oAuthInfoResponse.getEmail())
                 .authority(Authority.ROLE_CLIENT)
+                .channelId(1L)
                 .build();
     }
 
@@ -57,6 +60,6 @@ public class Member extends BaseTimeEntity {
     }
 
     public void exitChannel() {
-        this.channel = null;
+        this.channelId = 1L;
     }
 }

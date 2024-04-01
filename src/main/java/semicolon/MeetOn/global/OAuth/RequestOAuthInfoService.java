@@ -22,6 +22,6 @@ public class RequestOAuthInfoService {
     public Mono<OAuthInfoResponse> request(OAuthLoginParams params) {
         OAuthApiClient client = clients.get(params.oAuthProvider());
         return client.requestAccessToken(params)
-                .flatMap(accessToken -> client.requestOauthInfo(accessToken));
+                .flatMap(client::requestOauthInfo);
     }
 }
