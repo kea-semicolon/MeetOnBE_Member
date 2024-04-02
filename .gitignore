@@ -6,8 +6,8 @@ build/
 !**/src/test/**/build/
 
 ### YML files ###
-src/main/**/application-private-kakao.yml
-src/main/**/application.yml
+#src/main/**/application-private-kakao.yml
+#src/main/**/application.yml
 
 ### STS ###
 .apt_generated
