@@ -96,7 +96,7 @@ class MemberServiceTest {
     @Test
     void 멤버_정보가져오기_성공() {
         Member member = findMember();
-        MemberInfoDto memberInfoDto = memberService.userInfo(request);
+        MemberInfoNoIdDto memberInfoDto = memberService.userInfo(request);
         assertThat(memberInfoDto.getUserNickname()).isEqualTo(member.getUsername());
     }
 
@@ -104,7 +104,7 @@ class MemberServiceTest {
     void 멤버_정보_수정_성공() {
         Member member = findMember();
         String beforeName = member.getUsername();
-        MemberInfoDto memberInfoDto = MemberInfoDto.builder().userImage("change").userNickname("change").build();
+        MemberInfoNoIdDto memberInfoDto = MemberInfoNoIdDto.builder().userImage("change").userNickname("change").build();
         memberService.updateUserInfo(memberInfoDto, request);
         assertThat(member.getUsername()).isNotEqualTo(beforeName);
     }
@@ -118,7 +118,7 @@ class MemberServiceTest {
 
     @Test
     void 채널_멤버_리스트() {
-        List<MemberInfoDto> memberInfoDtos = memberService.channelUserList(request);
+        List<MemberInfoIdDto> memberInfoDtos = memberService.channelUserList(request);
         assertThat(memberInfoDtos.size()).isEqualTo(4);
     }
 

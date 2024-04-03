@@ -50,21 +50,27 @@ public class Member extends BaseTimeEntity {
         return Member
                 .builder()
                 .username(oAuthInfoResponse.getNickname())
+                .userImage(oAuthInfoResponse.getProfileImage())
                 .email(oAuthInfoResponse.getEmail())
                 .authority(Authority.ROLE_CLIENT)
                 .channelId(1L)
                 .build();
     }
 
-    public void updateInfo(MemberInfoDto updateMemberInfo) {
+    public void updateInfo(MemberInfoNoIdDto updateMemberInfo) {
         this.username = updateMemberInfo.getUserNickname();
         this.userImage = updateMemberInfo.getUserImage();
     }
 
-    public void updateChannelCreate(MemberInfoDto updateMemberInfo) {
-        this.username = updateMemberInfo.getUserNickname();
-        this.userImage = updateMemberInfo.getUserImage();
+    public void updateChannelCreate(MemberInfoNoIdDto updateMemberInfo, Long channelId) {
+        if (updateMemberInfo.getUserNickname() != null) {
+            this.username = updateMemberInfo.getUserNickname();
+        }
+        if(updateMemberInfo.getUserImage() != null){
+            this.userImage = updateMemberInfo.getUserImage();
+        }
         this.authority = updateMemberInfo.getAuthority();
+        this.channelId = channelId;
     }
 
     public void exitChannel() {

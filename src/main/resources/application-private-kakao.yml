@@ -8,6 +8,7 @@ spring:
             client-secret: xRqksavfetCVRiyF70dnTo3mmxO10dT5
             #redirect-uri: http://localhost:3000/login/kakao
             redirect-uri: http://localhost:8000/oauth/callback/kakao
+            #redirect-uri: http://localhost:8080/oauth/callback/kakao
             client-name: Kakao
             scope:
               - profile_nickname

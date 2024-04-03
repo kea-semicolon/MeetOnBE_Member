@@ -42,24 +42,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final JwtTokenGenerator jwtTokenGenerator;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CookieUtil cookieUtil;
 
-    /**
-     * AccessToken 재발급
-     * @return
-     * 여기 지금 쿠키에 access랑 refresh를 담고 있으니 프론트에서 쿠키 값 꺼내서 쓰고 access만 갱신하면 됨(refresh x)
-     */
-    @Transactional
-    public JwtToken refresh(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = CookieUtil.getCookieValue("refreshToken", request);
-        String memberId = CookieUtil.getCookieValue("memberId", request);
-        if(!jwtTokenProvider.validateToken(refreshToken)){
-            throw new BusinessLogicException(ExceptionCode.LOGOUT_MEMBER);
-        }
-        JwtToken jwtToken = jwtTokenGenerator.generate(Long.valueOf(memberId));
-        refreshToken = jwtTokenGenerator.generateRefreshToken(Long.valueOf(memberId));
-        CookieUtil.createCookie("refreshToken", refreshToken, response);
-        return jwtToken;
-    }
 
     /**
      * 로그아웃
@@ -67,12 +51,12 @@ public class MemberService {
      * @param response
      */
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = CookieUtil.getCookieValue("refreshToken", request);
+        String refreshToken = cookieUtil.getCookieValue("refreshToken", request);
         if(refreshToken != null){
-            CookieUtil.deleteCookie("refreshToken", response);
+            cookieUtil.deleteCookie("refreshToken", response);
         }
-        CookieUtil.deleteCookie("memberId", response);
-        CookieUtil.deleteCookie("JSESSIONID", response);
+        cookieUtil.deleteCookie("memberId", response);
+        cookieUtil.deleteCookie("JSESSIONID", response);
     }
 
     /**
@@ -83,18 +67,18 @@ public class MemberService {
     @Transactional
     public void deactivate(HttpServletRequest request, HttpServletResponse response) {
         memberRepository.delete(findMember(request));
-        CookieUtil.deleteCookie("JSESSIONID", response);
-        CookieUtil.deleteCookie("refreshToken", response);
-        CookieUtil.deleteCookie("memberId", response);
+        cookieUtil.deleteCookie("JSESSIONID", response);
+        cookieUtil.deleteCookie("refreshToken", response);
+        cookieUtil.deleteCookie("memberId", response);
     }
 
     /**
-     * 유저 정보
+     * 유저 정보 id 제외
      * @param request
      * @return
      */
-    public MemberInfoDto userInfo(HttpServletRequest request) {
-        return MemberInfoDto.toMemberInfoDto(findMember(request));
+    public MemberInfoNoIdDto userInfo(HttpServletRequest request) {
+        return MemberInfoNoIdDto.memberInfoNoIdDto(findMember(request));
     }
 
     /**
@@ -103,7 +87,7 @@ public class MemberService {
      * @param request
      */
     @Transactional
-    public void updateUserInfo(MemberInfoDto updateMemberInfo, HttpServletRequest request) {
+    public void updateUserInfo(MemberInfoNoIdDto updateMemberInfo, HttpServletRequest request) {
         findMember(request).updateInfo(updateMemberInfo);
     }
 
@@ -122,10 +106,11 @@ public class MemberService {
      * @param request
      * @return
      */
-    public List<MemberDto.MemberInfoDto> channelUserList(HttpServletRequest request) {
-        Long channelId = Long.valueOf(CookieUtil.getCookieValue("channelId", request));
+    public List<MemberInfoIdDto> channelUserList(HttpServletRequest request) {
+        Long channelId = Long.valueOf(cookieUtil.getCookieValue("channelId", request));
+        log.info("channelId={}", channelId);
         return memberRepository.findByChannelId(channelId).stream()
-                .map(MemberInfoDto::toMemberInfoIdDto)
+                .map(MemberInfoIdDto::toMemberInfoIdDto)
                 .collect(Collectors.toList());
     }
 
@@ -135,7 +120,7 @@ public class MemberService {
      * @return
      */
     private Member findMember(HttpServletRequest request) {
-        long memberId = Long.parseLong(CookieUtil.getCookieValue("memberId", request));
+        long memberId = Long.parseLong(cookieUtil.getCookieValue("memberId", request));
         return memberRepository.findById(memberId).orElseThrow(() -> new BusinessLogicException(MEMBER_NOT_FOUND));
     }
 }

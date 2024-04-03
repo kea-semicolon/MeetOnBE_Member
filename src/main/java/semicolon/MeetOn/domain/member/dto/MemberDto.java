@@ -11,23 +11,31 @@ public class MemberDto {
 
     @Getter
     @Builder
-    public static class MemberInfoDto {
-        private Long userId;
+    public static class MemberInfoNoIdDto {
         private String userNickname;
         private String userImage;
         private Authority authority;
 
-        public static MemberInfoDto toMemberInfoDto(Member member) {
-            return MemberInfoDto
+        public static MemberInfoNoIdDto memberInfoNoIdDto(Member member) {
+            return MemberInfoNoIdDto
                     .builder()
                     .userNickname(member.getUsername())
                     .userImage(member.getUserImage())
                     .authority(member.getAuthority())
                     .build();
         }
+    }
 
-        public static MemberInfoDto toMemberInfoIdDto(Member member) {
-            return MemberInfoDto
+    @Getter
+    @Builder
+    public static class MemberInfoIdDto {
+        private Long userId;
+        private String userNickname;
+        private String userImage;
+        private Authority authority;
+
+        public static MemberInfoIdDto toMemberInfoIdDto(Member member) {
+            return MemberInfoIdDto
                     .builder()
                     .userId(member.getId())
                     .userNickname(member.getUsername())

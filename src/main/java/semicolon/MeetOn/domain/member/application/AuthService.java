@@ -1,5 +1,6 @@
 package semicolon.MeetOn.domain.member.application;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import semicolon.MeetOn.global.OAuth.RequestOAuthInfoService;
 import semicolon.MeetOn.global.exception.BusinessLogicException;
 import semicolon.MeetOn.global.exception.code.ExceptionCode;
 import semicolon.MeetOn.global.jwt.JwtTokenGenerator;
+import semicolon.MeetOn.global.jwt.JwtTokenProvider;
 import semicolon.MeetOn.global.util.CookieUtil;
 
 import java.util.Optional;
@@ -29,7 +31,9 @@ public class AuthService {
 
     private final RequestOAuthInfoService requestOAuthInfoService;
     private final JwtTokenGenerator jwtTokenGenerator;
+    private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
+    private final CookieUtil cookieUtil;
     private static final long channelId = 1L;
 
     /**
@@ -44,10 +48,28 @@ public class AuthService {
                     Long memberId = findOrCreateMember(oAuthInfoResponse, response);
                     JwtToken token = jwtTokenGenerator.generate(memberId);
                     String refreshToken = jwtTokenGenerator.generateRefreshToken(memberId);
-                    CookieUtil.createCookie("refreshToken", refreshToken, response);
-                    CookieUtil.createCookie("memberId", String.valueOf(memberId), response);
+                    cookieUtil.createCookie("refreshToken", refreshToken, response);
+                    cookieUtil.createCookie("memberId", String.valueOf(memberId), response);
                     return Mono.just(token);
                 });
+    }
+
+    /**
+     * AccessToken 재발급
+     * @return
+     * 여기 지금 쿠키에 access랑 refresh를 담고 있으니 프론트에서 쿠키 값 꺼내서 쓰고 access만 갱신하면 됨(refresh x)
+     */
+    @Transactional
+    public JwtToken refresh(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = cookieUtil.getCookieValue("refreshToken", request);
+        String memberId = cookieUtil.getCookieValue("memberId", request);
+        if(!jwtTokenProvider.validateToken(refreshToken)){
+            throw new BusinessLogicException(ExceptionCode.LOGOUT_MEMBER);
+        }
+        JwtToken jwtToken = jwtTokenGenerator.generate(Long.valueOf(memberId));
+        refreshToken = jwtTokenGenerator.generateRefreshToken(Long.valueOf(memberId));
+        cookieUtil.createCookie("refreshToken", refreshToken, response);
+        return jwtToken;
     }
 
     /**
@@ -60,10 +82,10 @@ public class AuthService {
         if(findMember.isEmpty()){
             Member member = Member.toAdmin(oAuthInfoResponse);
             memberRepository.save(member);
-            CookieUtil.createCookie("channelId", String.valueOf(1L), response);
+            cookieUtil.createCookie("channelId", String.valueOf(1L), response);
             return member.getId();
         }
-        CookieUtil.createCookie("channelId", String.valueOf(findMember.get().getChannelId()), response);
+        cookieUtil.createCookie("channelId", String.valueOf(findMember.get().getChannelId()), response);
         return findMember.get().getId();
     }
 }

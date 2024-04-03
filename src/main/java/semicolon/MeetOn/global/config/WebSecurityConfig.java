@@ -1,5 +1,6 @@
 package semicolon.MeetOn.global.config;
 
+import io.netty.handler.codec.http.HttpMethod;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,7 +41,10 @@ public class WebSecurityConfig {
                         (authorizeRequests) -> authorizeRequests
                                 .requestMatchers("/oauth/**").permitAll()
                                 .requestMatchers("/member/refresh").permitAll()
-                                //.requestMatchers("/member/**").permitAll()
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/api/swagger-config").permitAll()
+                                .requestMatchers("/api/logistics").permitAll()
+                                .requestMatchers("/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling((exceptionConfig) -> exceptionConfig.authenticationEntryPoint(jwtAuthenticationEntryPoint)
