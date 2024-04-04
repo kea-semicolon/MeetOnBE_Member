@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import semicolon.MeetOn.domain.member.application.AuthService;
-import semicolon.MeetOn.domain.member.application.MemberService;
 import semicolon.MeetOn.global.OAuth.kakao.KakaoLoginParams;
 import semicolon.MeetOn.domain.member.dto.JwtToken;
 

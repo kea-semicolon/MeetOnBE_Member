@@ -112,7 +112,7 @@ class MemberServiceTest {
     @Test
     void 멤버_채널_나가기_성공() {
         Member member = findMember();
-        memberService.exitChannel(request);
+        memberService.exitChannel(request, response);
         assertThat(member.getChannelId()).isEqualTo(1L);
     }
 

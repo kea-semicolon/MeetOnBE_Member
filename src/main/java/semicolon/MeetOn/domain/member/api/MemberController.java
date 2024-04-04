@@ -70,8 +70,8 @@ public class MemberController {
      * 채널 나가기
      */
     @PatchMapping("/exit-channel")
-    public ResponseEntity<String> userExitChannel(HttpServletRequest request) {
-        memberService.exitChannel(request);
+    public ResponseEntity<String> userExitChannel(HttpServletRequest request, HttpServletResponse response) {
+        memberService.exitChannel(request, response);
         return ResponseEntity.ok("Ok");
     }
 

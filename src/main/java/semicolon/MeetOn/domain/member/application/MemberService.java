@@ -97,8 +97,9 @@ public class MemberService {
      * @param request
      */
     @Transactional
-    public void exitChannel(HttpServletRequest request) {
+    public void exitChannel(HttpServletRequest request, HttpServletResponse response) {
         findMember(request).exitChannel();
+        cookieUtil.createCookie("channelId", "1", response);
     }
 
     /**

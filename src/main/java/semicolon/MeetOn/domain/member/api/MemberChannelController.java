@@ -1,15 +1,10 @@
 package semicolon.MeetOn.domain.member.api;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import semicolon.MeetOn.domain.member.application.MemberChannelService;
-import semicolon.MeetOn.domain.member.domain.Member;
-import semicolon.MeetOn.domain.member.dto.MemberDto;
-import semicolon.MeetOn.global.exception.BusinessLogicException;
-import semicolon.MeetOn.global.exception.code.ExceptionCode;
 
 import static semicolon.MeetOn.domain.member.dto.MemberDto.*;
 
@@ -32,12 +27,22 @@ public class MemberChannelController {
         return ResponseEntity.ok("Ok");
     }
 
+    /**
+     * 채널 삭제 전 채널 소속 모든 유저 default 채널로 변경
+     * @param channelId
+     * @return
+     */
     @PatchMapping("/delete/channel/{channelId}")
     public ResponseEntity<String> memberChannelDeleted(@PathVariable Long channelId) {
         memberChannelService.deleteChannel(channelId);
         return ResponseEntity.ok("Ok");
     }
 
+    /**
+     * 특정 멤버 채널에서 추방 -> default 채널로 변경
+     * @param memberId
+     * @return
+     */
     @PatchMapping("/delete/member/{memberId}")
     public ResponseEntity<String> memberDeletedInChannel(@PathVariable Long memberId) {
         memberChannelService.deleteMemberInChannel(memberId);
