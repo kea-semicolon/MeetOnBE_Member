@@ -29,7 +29,7 @@ public class MemberBoardService {
 
     public List<MemberBoardDto> findMemberInfo(String username, Long channelId) {
         List<Member> memberList = memberRepository.findAllByUsernameAndChannelId(username, channelId);
-        log.info("memberSize={}", memberList.size());
+        log.info("memberSize={}, username={}", memberList.size(), username);
         return memberList.stream()
                 .map(member -> MemberBoardDto.builder().id(member.getId()).username(member.getUsername()).build())
                 .collect(Collectors.toList());

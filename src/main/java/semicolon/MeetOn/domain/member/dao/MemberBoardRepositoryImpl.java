@@ -22,12 +22,13 @@ public class MemberBoardRepositoryImpl implements MemberBoardRepository {
     public List<Member> findAllByUsernameAndChannelId(String username, Long channelId) {
         return
                 jpaQueryFactory.selectFrom(member)
-                        .where(usernameEq(username), channelIdEq(channelId))
+                        .where(usernameContain(username), channelIdEq(channelId))
                         .fetch();
     }
 
-    BooleanExpression usernameEq(String username) {
-        return StringUtils.hasText(username) ? member.username.eq(username) : null;
+    BooleanExpression usernameContain(String username) {
+//        return StringUtils.hasText(username) ? member.username.eq(username) : null;
+        return StringUtils.hasText(username) ? member.username.contains(username) : null;
     }
 
     BooleanExpression channelIdEq(Long channelId) {
