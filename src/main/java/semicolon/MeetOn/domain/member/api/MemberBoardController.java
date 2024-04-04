@@ -2,12 +2,12 @@ package semicolon.MeetOn.domain.member.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import semicolon.MeetOn.domain.member.application.MemberBoardService;
 import semicolon.MeetOn.domain.member.application.MemberService;
+import semicolon.MeetOn.domain.member.dto.MemberBoardDto;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -20,5 +20,10 @@ public class MemberBoardController {
     @GetMapping("/find")
     public Boolean existMember(@RequestParam Long memberId) {
         return memberBoardService.findMember(memberId);
+    }
+
+    @GetMapping("/board/info")
+    public List<MemberBoardDto> getMemberInfoForBoardTest(@RequestParam String username, @RequestParam Long channelId) {
+        return memberBoardService.findMemberInfo(username, channelId);
     }
 }

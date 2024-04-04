@@ -51,6 +51,12 @@ dependencies {
 	//Spring webClient
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+	// QueryDsl
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta" // 버전 변경
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
 	// OpenAPI
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 //	implementation "io.springfox:springfox-boot-starter:3.0.0"
