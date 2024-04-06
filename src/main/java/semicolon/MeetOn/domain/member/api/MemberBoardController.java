@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import semicolon.MeetOn.domain.member.application.MemberBoardService;
-import semicolon.MeetOn.domain.member.application.MemberService;
 import semicolon.MeetOn.domain.member.dto.MemberBoardDto;
 
 import java.util.List;
@@ -22,8 +21,13 @@ public class MemberBoardController {
         return memberBoardService.findMember(memberId);
     }
 
+    @GetMapping("/board/infoList")
+    public List<MemberBoardDto> getMemberInfoForBoardList(@RequestParam String username, @RequestParam Long channelId) {
+        return memberBoardService.findMemberInfoList(username, channelId);
+    }
+
     @GetMapping("/board/info")
-    public List<MemberBoardDto> getMemberInfoForBoardTest(@RequestParam String username, @RequestParam Long channelId) {
-        return memberBoardService.findMemberInfo(username, channelId);
+    public MemberBoardDto getMemberInfoForBoard(@RequestParam Long memberId) {
+        return memberBoardService.findMemberInfo(memberId);
     }
 }

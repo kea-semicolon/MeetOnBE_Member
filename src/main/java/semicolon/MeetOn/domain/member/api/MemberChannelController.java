@@ -23,6 +23,7 @@ public class MemberChannelController {
     public ResponseEntity<String> memberUpdateByChannel(@RequestBody MemberInfoNoIdDto memberInfoDto,
                                                         @RequestParam Long memberId,
                                                         @RequestParam Long channelId) {
+        log.info("userName={}", memberInfoDto.getUserNickname());
         memberChannelService.updateMember(memberInfoDto, memberId, channelId);
         return ResponseEntity.ok("Ok");
     }
@@ -32,8 +33,8 @@ public class MemberChannelController {
      * @param channelId
      * @return
      */
-    @PatchMapping("/delete/channel/{channelId}")
-    public ResponseEntity<String> memberChannelDeleted(@PathVariable Long channelId) {
+    @PatchMapping("/delete/channel")
+    public ResponseEntity<String> memberChannelDeleted(@RequestParam Long channelId) {
         memberChannelService.deleteChannel(channelId);
         return ResponseEntity.ok("Ok");
     }
@@ -43,8 +44,8 @@ public class MemberChannelController {
      * @param memberId
      * @return
      */
-    @PatchMapping("/delete/member/{memberId}")
-    public ResponseEntity<String> memberDeletedInChannel(@PathVariable Long memberId) {
+    @PatchMapping("/delete/member")
+    public ResponseEntity<String> memberDeletedInChannel(@RequestParam Long memberId) {
         memberChannelService.deleteMemberInChannel(memberId);
         return ResponseEntity.ok("Ok");
     }

@@ -17,7 +17,7 @@ import static semicolon.MeetOn.domain.member.dto.MemberDto.*;
 public class Member extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank

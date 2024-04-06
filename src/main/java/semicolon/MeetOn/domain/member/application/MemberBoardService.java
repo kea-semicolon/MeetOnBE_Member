@@ -10,8 +10,8 @@ import semicolon.MeetOn.domain.member.dto.MemberBoardDto;
 import semicolon.MeetOn.global.exception.BusinessLogicException;
 import semicolon.MeetOn.global.exception.code.ExceptionCode;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -23,15 +23,25 @@ public class MemberBoardService {
     private final MemberRepository memberRepository;
 
     public Boolean findMember(Long memberId) {
-        memberRepository.findById(memberId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
-        return true;
+        Optional<Member> find = memberRepository.findById(memberId);
+        return find.isPresent();
     }
 
-    public List<MemberBoardDto> findMemberInfo(String username, Long channelId) {
+    public List<MemberBoardDto> findMemberInfoList(String username, Long channelId) {
         List<Member> memberList = memberRepository.findAllByUsernameAndChannelId(username, channelId);
         log.info("memberSize={}, username={}", memberList.size(), username);
         return memberList.stream()
                 .map(member -> MemberBoardDto.builder().id(member.getId()).username(member.getUsername()).build())
                 .collect(Collectors.toList());
+    }
+
+    public MemberBoardDto findMemberInfo(Long memberId) {
+         Member member = find(memberId);
+         return MemberBoardDto.builder().id(member.getId()).username(member.getUsername()).build();
+    }
+
+    private Member find(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 }
