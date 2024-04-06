@@ -14,4 +14,6 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberBoa
     Optional<Member> findByEmail(String email);
 
     List<Member> findByChannelId(Long channelId);
+
+    List<Member> findMembersByIdIn(List<Long> memberIds);
 }
