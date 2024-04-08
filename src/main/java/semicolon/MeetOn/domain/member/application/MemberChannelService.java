@@ -36,24 +36,24 @@ public class MemberChannelService {
         member.updateChannelCreate(memberInfoDto, channelId);
     }
 
-    /**
-     * 유저 채널 default 채널로 변경
-     * @param channelId
-     */
-    @Transactional
-    public void deleteChannel(Long channelId) {
-        memberRepository.findByChannelId(channelId).forEach(Member::exitChannel);
-    }
+//    /**
+//     * 유저 채널 default 채널로 변경
+//     * @param channelId
+//     */
+//    @Transactional
+//    public void deleteChannel(Long channelId) {
+//        memberRepository.findByChannelId(channelId).forEach(Member::exitChannel);
+//    }
 
-    /**
-     * 유저 채널 default 채널로 변경
-     * @param memberId
-     */
-    @Transactional
-    public void deleteMemberInChannel(Long memberId) {
-        Member member = findMember(memberId);
-        member.exitChannel();
-    }
+//    /**
+//     * 유저 채널 default 채널로 변경
+//     * @param memberId
+//     */
+//    @Transactional
+//    public void deleteMemberInChannel(Long memberId) {
+//        Member member = findMember(memberId);
+//        member.exitChannel();
+//    }
 
     private Member findMember(Long memberId) {
         return memberRepository.findById(memberId)

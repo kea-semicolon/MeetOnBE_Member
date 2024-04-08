@@ -43,6 +43,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final CookieUtil cookieUtil;
     private final KafkaTemplate<String, String> kafkaTemplate;
+    private final static String MEMBER_DELETED_TOPIC = "member_deleted_topic";
 
 
     /**
@@ -67,7 +68,7 @@ public class MemberService {
     @Transactional
     public void deactivate(HttpServletRequest request, HttpServletResponse response) {
         memberRepository.delete(findMember(request));
-        kafkaTemplate.send("member-delete-topic", cookieUtil.getCookieValue("memberId", request));
+        kafkaTemplate.send(MEMBER_DELETED_TOPIC, cookieUtil.getCookieValue("memberId", request));
         cookieUtil.deleteCookie("JSESSIONID", response);
         cookieUtil.deleteCookie("refreshToken", response);
         cookieUtil.deleteCookie("memberId", response);
@@ -100,7 +101,7 @@ public class MemberService {
     @Transactional
     public void exitChannel(HttpServletRequest request, HttpServletResponse response) {
         findMember(request).exitChannel();
-        kafkaTemplate.send("member-deactive-topic", cookieUtil.getCookieValue("memberId", request));
+        kafkaTemplate.send(MEMBER_DELETED_TOPIC, cookieUtil.getCookieValue("memberId", request));
         cookieUtil.createCookie("channelId", "1", response);
     }
 

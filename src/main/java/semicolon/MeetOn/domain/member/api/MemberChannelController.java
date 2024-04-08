@@ -28,25 +28,25 @@ public class MemberChannelController {
         return ResponseEntity.ok("Ok");
     }
 
-    /**
-     * 채널 삭제 전 채널 소속 모든 유저 default 채널로 변경
-     * @param channelId
-     * @return
-     */
-    @PatchMapping("/delete/channel")
-    public ResponseEntity<String> memberChannelDeleted(@RequestParam Long channelId) {
-        memberChannelService.deleteChannel(channelId);
-        return ResponseEntity.ok("Ok");
-    }
+//    /**
+//     * 채널 삭제 전 채널 소속 모든 유저 default 채널로 변경
+//     * @param channelId
+//     * @return
+//     */
+//    @PatchMapping("/delete/channel")
+//    public ResponseEntity<String> memberChannelDeleted(@RequestParam Long channelId) {
+//        memberChannelService.deleteChannel(channelId);
+//        return ResponseEntity.ok("Ok");
+//    }
 
-    /**
-     * 특정 멤버 채널에서 추방 -> default 채널로 변경
-     * @param memberId
-     * @return
-     */
-    @PatchMapping("/delete/member")
-    public ResponseEntity<String> memberDeletedInChannel(@RequestParam Long memberId) {
-        memberChannelService.deleteMemberInChannel(memberId);
-        return ResponseEntity.ok("Ok");
-    }
+//    /**
+//     * 특정 멤버 채널에서 추방 -> default 채널로 변경
+//     * @param memberId
+//     * @return
+//     */
+//    @PatchMapping("/delete/member")
+//    public ResponseEntity<String> memberDeletedInChannel(@RequestParam Long memberId) {
+//        memberChannelService.deleteMemberInChannel(memberId);
+//        return ResponseEntity.ok("Ok");
+//    }
 }
