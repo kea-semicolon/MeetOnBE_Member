@@ -19,3 +19,7 @@ Kafka 서버 실행
 </br>
 
 ##### PS C:\kafka_2.13-3.7.0> .\bin\windows\kafka-server-start.bat .\config\server.properties
+
+# ERD
+
+![image](https://github.com/kea-semicolon/MeetOnBE_Member/assets/127479677/121182c3-0744-4c87-a30a-61eab96ffb16)
