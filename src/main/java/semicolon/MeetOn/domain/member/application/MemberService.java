@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -40,9 +41,8 @@ import static semicolon.MeetOn.global.exception.code.ExceptionCode.MEMBER_NOT_FO
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final JwtTokenGenerator jwtTokenGenerator;
-    private final JwtTokenProvider jwtTokenProvider;
     private final CookieUtil cookieUtil;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
 
     /**
@@ -67,6 +67,7 @@ public class MemberService {
     @Transactional
     public void deactivate(HttpServletRequest request, HttpServletResponse response) {
         memberRepository.delete(findMember(request));
+        kafkaTemplate.send("member-delete-topic", cookieUtil.getCookieValue("memberId", request));
         cookieUtil.deleteCookie("JSESSIONID", response);
         cookieUtil.deleteCookie("refreshToken", response);
         cookieUtil.deleteCookie("memberId", response);
@@ -99,6 +100,7 @@ public class MemberService {
     @Transactional
     public void exitChannel(HttpServletRequest request, HttpServletResponse response) {
         findMember(request).exitChannel();
+        kafkaTemplate.send("member-deactive-topic", cookieUtil.getCookieValue("memberId", request));
         cookieUtil.createCookie("channelId", "1", response);
     }
 

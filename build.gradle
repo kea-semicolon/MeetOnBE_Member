@@ -41,6 +41,8 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
+	implementation 'org.springframework.kafka:spring-kafka'
+
 	//jwt
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
@@ -60,6 +62,8 @@ dependencies {
 
 	// OpenAPI
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
+	implementation 'org.springframework.kafka:spring-kafka'
 //	implementation "io.springfox:springfox-boot-starter:3.0.0"
 }
 

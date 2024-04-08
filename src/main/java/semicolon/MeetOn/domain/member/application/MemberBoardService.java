@@ -22,11 +22,6 @@ public class MemberBoardService {
 
     private final MemberRepository memberRepository;
 
-    public Boolean findMember(Long memberId) {
-        Optional<Member> find = memberRepository.findById(memberId);
-        return find.isPresent();
-    }
-
     public List<MemberBoardDto> findMemberInfoList(String username, Long channelId) {
         List<Member> memberList = memberRepository.findAllByUsernameAndChannelId(username, channelId);
         log.info("memberSize={}, username={}", memberList.size(), username);

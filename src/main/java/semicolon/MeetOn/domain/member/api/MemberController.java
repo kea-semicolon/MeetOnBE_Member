@@ -44,6 +44,7 @@ public class MemberController {
     @DeleteMapping("/deactivate")
     public ResponseEntity<String> deactivate(HttpServletRequest request, HttpServletResponse response) {
         memberService.deactivate(request, response);
+
         return ResponseEntity.ok("Ok");
     }
 

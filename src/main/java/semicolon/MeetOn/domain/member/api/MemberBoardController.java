@@ -16,11 +16,6 @@ public class MemberBoardController {
 
     private final MemberBoardService memberBoardService;
 
-    @GetMapping("/find")
-    public Boolean existMember(@RequestParam Long memberId) {
-        return memberBoardService.findMember(memberId);
-    }
-
     @GetMapping("/board/infoList")
     public List<MemberBoardDto> getMemberInfoForBoardList(@RequestParam String username, @RequestParam Long channelId) {
         return memberBoardService.findMemberInfoList(username, channelId);
