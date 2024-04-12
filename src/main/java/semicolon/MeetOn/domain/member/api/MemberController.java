@@ -29,7 +29,7 @@ public class MemberController {
      * @param response
      * @return
      */
-    @Operation(description = "로그아웃")
+    @Operation(summary = "로그아웃", description = "로그아웃")
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response){
         memberService.logout(request, response);
@@ -43,7 +43,7 @@ public class MemberController {
      * @param response
      * @return
      */
-    @Operation(description = "탈퇴")
+    @Operation(summary = "탈퇴", description = "탈퇴")
     @DeleteMapping("/deactivate")
     public ResponseEntity<String> deactivate(HttpServletRequest request, HttpServletResponse response) {
         memberService.deactivate(request, response);
@@ -56,7 +56,7 @@ public class MemberController {
      * @param request
      * @return
      */
-    @Operation(description = "유저 정보 가져오기")
+    @Operation(summary = "유저 정보 가져오기", description = "유저 정보 가져오기")
     @GetMapping("/info")
     public ResponseEntity<MemberInfoNoIdDto> userInfo(HttpServletRequest request) {
         return ResponseEntity.ok(memberService.userInfo(request));
@@ -65,7 +65,7 @@ public class MemberController {
     /**
      * 유저 정보 업데이트
      */
-    @Operation(description = "유저 정보 업데이트")
+    @Operation(summary = "회원 가입 창 유저 정보 업데이트", description = "유저 정보 업데이트 + MemberInfoNoIdDto")
     @PatchMapping("/info-change")
     public ResponseEntity<String> userInfoUpdate(@RequestBody MemberInfoNoIdDto updateMemberInfo, HttpServletRequest request) {
         memberService.updateUserInfo(updateMemberInfo, request);
@@ -75,7 +75,7 @@ public class MemberController {
     /**
      * 채널 나가기
      */
-    @Operation(description = "채널 나가기")
+    @Operation(summary = "채널 나가기", description = "채널 나가기")
     @PatchMapping("/exit-channel")
     public ResponseEntity<String> userExitChannel(HttpServletRequest request, HttpServletResponse response) {
         memberService.exitChannel(request, response);
@@ -85,7 +85,7 @@ public class MemberController {
     /**
      * 채널 유저 리스트
      */
-    @Operation(description = "채널 유저 리스트")
+    @Operation(summary = "채널 유저 리스트", description = "채널 유저 리스트")
     @GetMapping("")
     public ResponseEntity<List<MemberDto.MemberInfoIdDto>> channelUserList(HttpServletRequest request) {
         return ResponseEntity.ok(memberService.channelUserList(request));
