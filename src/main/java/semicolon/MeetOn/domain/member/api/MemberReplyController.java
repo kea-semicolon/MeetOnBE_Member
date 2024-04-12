@@ -1,5 +1,6 @@
 package semicolon.MeetOn.domain.member.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ public class MemberReplyController {
 
     private final MemberReplyService memberReplyService;
 
+    @Operation(description = "Member-Reply 댓글, memberId로 member 정보 가져오기")
     @PostMapping("/reply/infoList")
     public ResponseEntity<List<MemberReplyDto>> getUserInfoList(@RequestBody List<Long> userIdList) {
         return ResponseEntity.ok(memberReplyService.memberInfoList(userIdList));

@@ -1,5 +1,6 @@
 package semicolon.MeetOn.domain.member.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class AuthController {
      * @param response
      * @return
      */
+    @Operation(description = "로그인")
     @PostMapping("/callback/kakao")
     public Mono<ResponseEntity<JwtToken>> login(@RequestParam String code,
                                                 HttpServletResponse response) {
@@ -45,6 +47,7 @@ public class AuthController {
      * @param response
      * @return
      */
+    @Operation(description = "리프레시 토큰으로 accessToken 재발급")
     @PostMapping("/refresh")
     public ResponseEntity<JwtToken> refresh(HttpServletRequest request, HttpServletResponse response) {
         return ResponseEntity.ok(authService.refresh(request, response));

@@ -1,5 +1,6 @@
 package semicolon.MeetOn.domain.member.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class MemberChannelController {
     /**
      * 채널 API에서 멤버 정보가 들어오면 Post로 업데이트
      */
+    @Operation(description = "Member-Channel 내부 API, Member Update")
     @PatchMapping("/update")
     public ResponseEntity<String> memberUpdateByChannel(@RequestBody MemberInfoNoIdDto memberInfoDto,
                                                         @RequestParam Long memberId,
