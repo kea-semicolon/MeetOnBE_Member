@@ -39,6 +39,16 @@ spring:
 jwt:
   secret: /vUwAz/Vx78zX5/E4v6kjfbyoTRpYtOK2WT9rYcXeNPzDMuv1BlehYL113paVVYvUTyUIYg3kSZglWjEAJxgMw==
 
+springdoc:
+  api-docs:
+    path: /member-api/v3/api-docs
+  swagger-ui:
+    path: /member-api/v3/swagger-ui.html
+
+openapi:
+  service:
+    url: http://localhost:8000
+
 eureka:
   client:
     fetch-registry: true
@@ -48,3 +58,4 @@ eureka:
 
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    hostname: localhost
