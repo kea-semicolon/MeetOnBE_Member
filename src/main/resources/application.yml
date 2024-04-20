@@ -10,7 +10,7 @@ spring:
 #    password: 1
 #    driver-class-name: org.h2.Driver
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost/meeton?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://172.16.212.76/meeton?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
     username: root
     password: '1918'
 
@@ -47,15 +47,15 @@ springdoc:
 
 openapi:
   service:
-    url: http://localhost:8000
+    url: http://172.16.212.76:8000
 
 eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://172.16.212.76:8761/eureka
 
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-    hostname: localhost
+    hostname: 172.16.212.76

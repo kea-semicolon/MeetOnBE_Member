@@ -13,7 +13,7 @@ import java.util.Date;
 public class JwtTokenGenerator {
 
     private static final String BEARER_TYPE = "Bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24;            // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -21,9 +21,12 @@ public class JwtTokenGenerator {
     public JwtToken generate(Long memberId) {
         long now = (new Date()).getTime();
         Date accessTokenExpiredAt = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+        Date refreshTokenExpiredAt = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
         String subject = memberId.toString();
         String accessToken = jwtTokenProvider.generate(subject, accessTokenExpiredAt);
-        return JwtToken.of(accessToken, BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME / 1000L);
+        String refreshToken = jwtTokenProvider.generate(subject, refreshTokenExpiredAt);
+        return JwtToken.of(BEARER_TYPE, accessToken, refreshToken,
+                ACCESS_TOKEN_EXPIRE_TIME / 1000L, REFRESH_TOKEN_EXPIRE_TIME / 1000L);
     }
 
     public String generateRefreshToken(Long memberId) {
