@@ -29,7 +29,7 @@ public class MemberController {
      * @param response
      * @return
      */
-    @Operation(summary = "로그아웃", description = "로그아웃")
+    @Operation(summary = "로그 아웃", description = "로그아웃")
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response){
         memberService.logout(request, response);
