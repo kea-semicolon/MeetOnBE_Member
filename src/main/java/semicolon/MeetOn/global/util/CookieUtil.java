@@ -24,6 +24,8 @@ public class CookieUtil {
         cookie.setPath("/");
         cookie.setMaxAge(1000 * 60 * 60 * 24 * 7);
         response.addCookie(cookie);
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Origin",  "http://localhost");
     }
 
     /**
