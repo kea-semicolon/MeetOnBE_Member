@@ -20,10 +20,9 @@ public class CookieUtil {
         Cookie cookie = new Cookie(cookieName, cookieValue);
         //쿠키 속성 설정
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge(1000 * 60 * 60 * 24 * 7);
-        cookie.setDomain(".ngrok-free.app");
         response.addCookie(cookie);
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Origin",  "http://localhost");
