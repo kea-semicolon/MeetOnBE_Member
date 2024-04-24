@@ -23,7 +23,7 @@ public class CookieUtil {
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(1000 * 60 * 60 * 24 * 7);
-        cookie.setDomain("https://f1ae-203-249-127-39.ngrok-free.app");
+        cookie.setDomain(".ngrok-free.app");
         response.addCookie(cookie);
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Origin",  "http://localhost");
