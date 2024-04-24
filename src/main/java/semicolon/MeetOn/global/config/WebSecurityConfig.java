@@ -40,7 +40,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(
                         (authorizeRequests) -> authorizeRequests
                                 .requestMatchers("/oauth/**").permitAll()
-                                .requestMatchers("/member/refresh").permitAll()
+                                .requestMatchers("/oauth/refresh").permitAll()
                                 .requestMatchers("/member-api/**").permitAll()
 //                                .requestMatchers("/swagger-ui/**").permitAll()
 //                                .requestMatchers("/api/swagger-config").permitAll()
