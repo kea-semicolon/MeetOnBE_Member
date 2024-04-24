@@ -12,7 +12,7 @@ spring:
           kakao:
             client-id: 1bab02deaaf8c73caa95dcdd8e84f6b7
             client-secret: xRqksavfetCVRiyF70dnTo3mmxO10dT5
-            redirect-uri: http://localhost:3000/login/kakao
+            redirect-uri: http://172.16.212.76:3000/oauth/callback/kakao
             #redirect-uri: http://172.16.212.76:8000/oauth/callback/kakao
             #redirect-uri: http://localhost:8080/oauth/callback/kakao
             client-name: Kakao
