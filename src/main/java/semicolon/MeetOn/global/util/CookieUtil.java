@@ -23,6 +23,7 @@ public class CookieUtil {
         cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge(1000 * 60 * 60 * 24 * 7);
+        cookie.setDomain("172.16.212.76");
         response.addCookie(cookie);
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Origin",  "http://localhost");
