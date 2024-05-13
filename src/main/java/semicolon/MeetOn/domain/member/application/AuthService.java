@@ -71,7 +71,7 @@ public class AuthService {
         }
         JwtToken jwtToken = jwtTokenGenerator.generate(Long.valueOf(memberId), Long.valueOf(channelId));
         refreshToken = jwtTokenGenerator.generateRefreshToken(Long.valueOf(memberId));
-        cookieUtil.createCookie("refreshToken", refreshToken, response);
+        //cookieUtil.createCookie("refreshToken", refreshToken, response);
         return jwtToken;
     }
 
