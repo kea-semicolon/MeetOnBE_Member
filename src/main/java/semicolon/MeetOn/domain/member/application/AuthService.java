@@ -2,6 +2,8 @@ package semicolon.MeetOn.domain.member.application;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,11 +47,11 @@ public class AuthService {
     public Mono<JwtToken> login(OAuthLoginParams params, HttpServletResponse response) {
         return requestOAuthInfoService.request(params)
                 .flatMap(oAuthInfoResponse -> {
-                    Long memberId = findOrCreateMember(oAuthInfoResponse, response);
-                    JwtToken token = jwtTokenGenerator.generate(memberId);
-                    String refreshToken = jwtTokenGenerator.generateRefreshToken(memberId);
-                    cookieUtil.createCookie("refreshToken", refreshToken, response);
-                    cookieUtil.createCookie("memberId", String.valueOf(memberId), response);
+                    Ids ids = findOrCreateMember(oAuthInfoResponse, response);
+                    JwtToken token = jwtTokenGenerator.generate(ids.getMemberId(), ids.getChannelId());
+                    String refreshToken = jwtTokenGenerator.generateRefreshToken(ids.memberId);
+                    //cookieUtil.createCookie("refreshToken", refreshToken, response);
+                    //cookieUtil.createCookie("memberId", String.valueOf(memberId), response);
                     return Mono.just(token);
                 });
     }
@@ -63,10 +65,11 @@ public class AuthService {
     public JwtToken refresh(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = cookieUtil.getCookieValue("refreshToken", request);
         String memberId = cookieUtil.getCookieValue("memberId", request);
+        String channelId = cookieUtil.getCookieValue("channelId", request);
         if(!jwtTokenProvider.validateToken(refreshToken)){
             throw new BusinessLogicException(ExceptionCode.LOGOUT_MEMBER);
         }
-        JwtToken jwtToken = jwtTokenGenerator.generate(Long.valueOf(memberId));
+        JwtToken jwtToken = jwtTokenGenerator.generate(Long.valueOf(memberId), Long.valueOf(channelId));
         refreshToken = jwtTokenGenerator.generateRefreshToken(Long.valueOf(memberId));
         cookieUtil.createCookie("refreshToken", refreshToken, response);
         return jwtToken;
@@ -77,15 +80,22 @@ public class AuthService {
      * @param oAuthInfoResponse
      * @return
      */
-    private Long findOrCreateMember(OAuthInfoResponse oAuthInfoResponse, HttpServletResponse response) {
+    private Ids findOrCreateMember(OAuthInfoResponse oAuthInfoResponse, HttpServletResponse response) {
         Optional<Member> findMember = memberRepository.findByEmail(oAuthInfoResponse.getEmail());
         if(findMember.isEmpty()){
             Member member = Member.toAdmin(oAuthInfoResponse);
             memberRepository.save(member);
-            cookieUtil.createCookie("channelId", String.valueOf(1L), response);
-            return member.getId();
+            //cookieUtil.createCookie("channelId", String.valueOf(1L), response);
+            return new Ids(member.getId(), channelId);
         }
-        cookieUtil.createCookie("channelId", String.valueOf(findMember.get().getChannelId()), response);
-        return findMember.get().getId();
+        //cookieUtil.createCookie("channelId", String.valueOf(findMember.get().getChannelId()), response);
+        return new Ids(findMember.get().getId(), findMember.get().getChannelId());
+    }
+
+    @Getter
+    @Builder
+    private class Ids{
+        Long memberId;
+        Long channelId;
     }
 }

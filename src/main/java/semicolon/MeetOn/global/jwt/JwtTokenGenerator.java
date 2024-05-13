@@ -18,7 +18,7 @@ public class JwtTokenGenerator {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    public JwtToken generate(Long memberId) {
+    public JwtToken generate(Long memberId, Long channelId) {
         long now = (new Date()).getTime();
         Date accessTokenExpiredAt = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         Date refreshTokenExpiredAt = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
@@ -26,7 +26,8 @@ public class JwtTokenGenerator {
         String accessToken = jwtTokenProvider.generate(subject, accessTokenExpiredAt);
         String refreshToken = jwtTokenProvider.generate(subject, refreshTokenExpiredAt);
         return JwtToken.of(BEARER_TYPE, accessToken, refreshToken,
-                ACCESS_TOKEN_EXPIRE_TIME / 1000L, REFRESH_TOKEN_EXPIRE_TIME / 1000L);
+                ACCESS_TOKEN_EXPIRE_TIME / 1000L, REFRESH_TOKEN_EXPIRE_TIME / 1000L,
+                        memberId, channelId);
     }
 
     public String generateRefreshToken(Long memberId) {

@@ -11,9 +11,12 @@ public class JwtToken {
     private String refreshToken;
     private Long tokenExpireIn;
     private Long refreshTokenExpireIn;
+    private Long memberId;
+    private Long channelId;
 
     public static JwtToken of(String grantType, String accessToken, String refreshToken,
-                              Long expiresIn, Long refreshTokenExpireIn) {
-        return new JwtToken(grantType, accessToken, refreshToken, expiresIn, refreshTokenExpireIn);
+                              Long expiresIn, Long refreshTokenExpireIn, Long memberId, Long channelId) {
+        return new JwtToken(grantType, accessToken, refreshToken,
+                expiresIn, refreshTokenExpireIn, memberId, channelId);
     }
 }
