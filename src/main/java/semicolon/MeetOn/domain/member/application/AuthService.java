@@ -94,7 +94,7 @@ public class AuthService {
 
     @Getter
     @Builder
-    private class Ids{
+    private static class Ids {
         Long memberId;
         Long channelId;
     }
