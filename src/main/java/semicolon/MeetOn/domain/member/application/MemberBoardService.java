@@ -24,7 +24,7 @@ public class MemberBoardService {
 
     public List<MemberBoardDto> findMemberInfoList(String username, Long channelId) {
         List<Member> memberList = memberRepository.findAllByUsernameAndChannelId(username, channelId);
-        log.info("memberSize={}, username={}", memberList.size(), username);
+        log.info("memberSize={}, username={}, channelId={}", memberList.size(), username, channelId);
         return memberList.stream()
                 .map(member -> MemberBoardDto.builder().id(member.getId()).username(member.getUsername()).build())
                 .collect(Collectors.toList());
