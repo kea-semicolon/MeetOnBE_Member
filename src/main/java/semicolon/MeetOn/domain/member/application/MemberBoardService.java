@@ -10,6 +10,8 @@ import semicolon.MeetOn.domain.member.dto.MemberBoardDto;
 import semicolon.MeetOn.global.exception.BusinessLogicException;
 import semicolon.MeetOn.global.exception.code.ExceptionCode;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +25,7 @@ public class MemberBoardService {
     private final MemberRepository memberRepository;
 
     public List<MemberBoardDto> findMemberInfoList(String username, Long channelId) {
+        username = URLDecoder.decode(username, StandardCharsets.UTF_8);
         List<Member> memberList = memberRepository.findAllByUsernameAndChannelId(username, channelId);
         log.info("memberSize={}, username={}, channelId={}", memberList.size(), username, channelId);
         return memberList.stream()
