@@ -1,10 +1,4 @@
 spring:
-  kafka:
-    consumer:
-      bootstrap-servers: 172.16.212.76:9092
-    producer:
-      bootstrap-servers: 172.16.212.76:9092
-
   security:
     oauth2:
       client:
