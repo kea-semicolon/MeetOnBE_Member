@@ -1,6 +1,10 @@
 server:
   port: 8086
 
+app:
+  gateway:
+    url: ${게이트웨이 주소}
+
 spring:
   application:
     name: member

@@ -1,5 +1,6 @@
 package semicolon.MeetOn.global.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
+@Slf4j
 @Configuration
 public class ClientConfig {
 
@@ -21,9 +23,10 @@ public class ClientConfig {
 
     @Bean
     public WebClient webClient() {
+        log.info("gatewayUrl= {}", gatewayUrl);
         return WebClient
                 .builder()
-                .baseUrl("http://172.16.212.76:8000")
+                .baseUrl(gatewayUrl)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
