@@ -110,12 +110,13 @@ public class MemberService {
      * @param request
      * @return
      */
-    public List<MemberInfoIdDto> channelUserList(HttpServletRequest request) {
+    public MemberInfoIdDtoList<MemberInfoIdDto> channelUserList(HttpServletRequest request) {
         Long channelId = Long.valueOf(cookieUtil.getCookieValue("channelId", request));
         log.info("channelId={}", channelId);
-        return memberRepository.findByChannelId(channelId).stream()
+        List<MemberInfoIdDto> collect = memberRepository.findByChannelId(channelId).stream()
                 .map(MemberInfoIdDto::toMemberInfoIdDto)
                 .collect(Collectors.toList());
+        return MemberInfoIdDtoList.<MemberInfoIdDto>builder().userList(collect).build();
     }
 
     /**

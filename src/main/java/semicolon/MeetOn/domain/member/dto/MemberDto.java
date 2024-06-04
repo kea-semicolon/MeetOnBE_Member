@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import semicolon.MeetOn.domain.member.domain.Authority;
 import semicolon.MeetOn.domain.member.domain.Member;
 
+import java.util.List;
+
 public class MemberDto {
 
     @Getter
@@ -24,6 +26,12 @@ public class MemberDto {
                     .authority(member.getAuthority())
                     .build();
         }
+    }
+
+    @Getter
+    @Builder
+    public static class MemberInfoIdDtoList<T> {
+        private List<MemberInfoIdDto> userList;
     }
 
     @Getter

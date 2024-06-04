@@ -87,7 +87,7 @@ public class MemberController {
      */
     @Operation(summary = "채널 유저 리스트", description = "채널 유저 리스트")
     @GetMapping("")
-    public ResponseEntity<List<MemberDto.MemberInfoIdDto>> channelUserList(HttpServletRequest request) {
+    public ResponseEntity<MemberInfoIdDtoList<MemberInfoIdDto>> channelUserList(HttpServletRequest request) {
         return ResponseEntity.ok(memberService.channelUserList(request));
     }
 }
