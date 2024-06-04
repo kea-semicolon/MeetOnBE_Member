@@ -1,6 +1,7 @@
 app:
   gateway:
-    url: ${게이트웨이 주소}
+    url: https://a6e386f26f9684920bae44157ccb228c-609974462.ap-northeast-2.elb.amazonaws.com
+    #url: ${게이트웨이 주소}
 
 spring:
   application:
@@ -8,9 +9,12 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${db 주소}
-    username: ${db 사용자 이름}
-    password: ${db 비밀번호}
+    url: jdbc:mysql://meeton-member.chke6w2cu29b.ap-northeast-2.rds.amazonaws.com:3306/member
+    username: semicolon
+    password: semicolon7!
+#    url: ${db 주소}
+#    username: ${db 사용자 이름}
+#    password: ${db 비밀번호}
 
   cloud:
     kubernetes:
