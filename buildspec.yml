@@ -14,6 +14,7 @@ version: 0.2
 #- `OPS_REPO_NAME`: GitOps 레포지토리 이름.
 #- `GIT_USER_EMAIL`: Git 사용자 이메일.
 #- `GIT_USER_NAME`: Git 사용자 이름.
+#- `SERVICE_NAME` : 서비스 이름 (ex: member, channel...)
 
 phases:
   install:
@@ -52,7 +53,7 @@ phases:
         && aws configure set aws_secret_access_key $CODECOMMIT_SECRET_KEY \
         && git clone https://git-codecommit.$AWS_DEFAULT_REGION.amazonaws.com/v1/repos/$OPS_REPO_NAME \
         && cd $OPS_REPO_NAME \
-        && sed -i "s|image: .*|image: $AWS_ECR_URI|" deployment/member-deployment.yaml \
+        && sed -i "s|image: .*|image: $AWS_ECR_URI|" backend/services/$SERVICE_NAME/deployment.yaml \
         && git config --global user.email $GIT_USER_EMAIL \
         && git config --global user.name $GIT_USER_NAME \
         && git add . \
