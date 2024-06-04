@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import semicolon.MeetOn.domain.member.domain.Authority;
 import semicolon.MeetOn.domain.member.domain.Member;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class MemberDto {
@@ -39,16 +40,20 @@ public class MemberDto {
     public static class MemberInfoIdDto {
         private Long userId;
         private String userNickname;
+        private String userEmail;
         private String userImage;
         private Authority authority;
+        private LocalDateTime createdAt;
 
         public static MemberInfoIdDto toMemberInfoIdDto(Member member) {
             return MemberInfoIdDto
                     .builder()
                     .userId(member.getId())
                     .userNickname(member.getUsername())
+                    .userEmail(member.getEmail())
                     .userImage(member.getUserImage())
                     .authority(member.getAuthority())
+                    .createdAt(member.getCreatedAt())
                     .build();
         }
     }
