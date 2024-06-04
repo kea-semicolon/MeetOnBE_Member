@@ -1,0 +1,62 @@
+version: 0.2
+
+### 설정해야 할 변수 및 환경 변수
+# 모든 변수는 CodeBuild의 Environment에 저장되어 있습니다.
+#  1. **AWS 관련 변수**
+#  - `AWS_ACCOUNT_ID`: AWS 계정 ID.
+#- `AWS_DEFAULT_REGION`: 기본 리전 (예: us-east-1).
+#  2. **ECR 관련 변수**
+#- `IMAGE_REPO_NAME`: ECR 리포지토리 이름.
+#- `IMAGE_TAG`: Docker 이미지 태그 (예: latest).
+#  3. **CodeCommit 관련 변수**
+#- `CODECOMMIT_ACCESS_KEY`: CodeCommit 접근 키.
+#- `CODECOMMIT_SECRET_KEY`: CodeCommit 비밀 키.
+#- `OPS_REPO_NAME`: GitOps 레포지토리 이름.
+#- `GIT_USER_EMAIL`: Git 사용자 이메일.
+#- `GIT_USER_NAME`: Git 사용자 이름.
+
+phases:
+  install:
+    runtime-versions:
+      docker: 20
+    commands:
+      - |
+        curl -o kubectl \
+        https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl \
+        && chmod +x ./kubectl \
+        && mv ./kubectl /usr/local/bin/kubectl \
+        && mkdir ~/.kube \
+        && aws eks update-kubeconfig --region $AWS_DEFAULT_REGION --name meeton-cluster \
+        && git config --global credential.helper '!aws codecommit credential-helper $@' \
+        && git config --global credential.UseHttpPath true
+
+  pre_build:
+    commands:
+      - |
+        echo Logging in to Amazon ECR... \
+        && aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+
+  build:
+    commands:
+      - |
+        echo Building the Docker image \
+        && DATE=$(date '+%Y%m%d') \
+        && docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG$DATE . \
+        && docker tag $IMAGE_REPO_NAME:$IMAGE_TAG$DATE $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG$DATE \
+        && docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG$DATE
+
+  post_build:
+    commands:
+      - |
+        AWS_ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG$DATE \
+        && echo Build completed on $DATE \
+        && aws configure set aws_access_key_id $CODECOMMIT_ACCESS_KEY \
+        && aws configure set aws_secret_access_key $CODECOMMIT_SECRET_KEY \
+        && git clone https://git-codecommit.$AWS_DEFAULT_REGION.amazonaws.com/v1/repos/$OPS_REPO_NAME \
+        && cd $OPS_REPO_NAME \
+        && sed -i "s|image: .*|image: $AWS_ECR_URI|" deployment/member-deployment.yaml \
+        && git config --global user.email $GIT_USER_EMAIL \
+        && git config --global user.name $GIT_USER_NAME \
+        && git add . \
+        && git commit -m "update image tag $DATE" \
+        && git push
