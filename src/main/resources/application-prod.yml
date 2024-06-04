@@ -5,11 +5,21 @@ app:
 spring:
   application:
     name: member
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${db 주소}
     username: ${db 사용자 이름}
     password: ${db 비밀번호}
+
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: true
+      config:
+        enabled: true
+      secrets:
+        enabled: true
 
   kafka:
     consumer:
