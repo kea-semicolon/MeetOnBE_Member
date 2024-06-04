@@ -17,7 +17,7 @@ FROM openjdk:17.0.2-slim
 WORKDIR /app
 
 # 빌드 단계에서 생성된 JAR 파일을 복사
-COPY --from=build /app/build/libs/meeton-member-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY --from=build /app/build/libs/MeetOn-0.0.1-SNAPSHOT.jar /app/app.jar
 
 ## JVM 플래그 및 애플리케이션 실행
 #CMD ["java", "-Dspring.profiles.active=prod", "-jar", "/app/app.jar"]
