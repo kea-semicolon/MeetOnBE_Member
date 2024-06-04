@@ -81,6 +81,11 @@ dependencies {
 
 	implementation 'org.springframework.kafka:spring-kafka'
 //	implementation "io.springfox:springfox-boot-starter:3.0.0"
+
+	//스프링 클라우드 유레카
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	//쿠버네티스
+	implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client'
 }
 
 dependencyManagement {
