@@ -35,13 +35,7 @@ openapi:
   service:
     url: https://a6e386f26f9684920bae44157ccb228c-609974462.ap-northeast-2.elb.amazonaws.com:8000
 
-#eureka:
-#  client:
-#    fetch-registry: true
-#    register-with-eureka: true
-#    service-url:
-#      defaultZone: http://${서버 주소}:8761/eureka
-#
-#  instance:
-#    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-#    hostname: ${서버 주소}
+eureka:
+  client:
+    fetch-registry: false
+    register-with-eureka: false
