@@ -27,7 +27,7 @@ spring:
     import: application-private-kakao.yml
 
 jwt:
-  secret: ${JWT_SECRET_KEY}
+  secret: /vUwAz/Vx78zX5/E4v6kjfbyoTRpYtOK2WT9rYcXeNPzDMuv1BlehYL113paVVYvUTyUIYg3kSZglWjEAJxgMw==
 
 springdoc:
   api-docs:
