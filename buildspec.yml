@@ -49,8 +49,6 @@ phases:
       - |
         AWS_ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG$DATE \
         && echo Build completed on $DATE \
-        && aws configure set aws_access_key_id $CODECOMMIT_ACCESS_KEY \
-        && aws configure set aws_secret_access_key $CODECOMMIT_SECRET_KEY \
         && git clone https://git-codecommit.$AWS_DEFAULT_REGION.amazonaws.com/v1/repos/$OPS_REPO_NAME \
         && cd $OPS_REPO_NAME \
         && sed -i "s|image: .*|image: $AWS_ECR_URI|" backend/services/$SERVICE_NAME/deployment.yaml \
@@ -59,3 +57,4 @@ phases:
         && git add . \
         && git commit -m "update image tag $DATE" \
         && git push
+        
