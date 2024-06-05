@@ -1,21 +1,5 @@
 version: 0.2
 
-### 설정해야 할 변수 및 환경 변수
-# 모든 변수는 CodeBuild의 Environment에 저장되어 있습니다.
-#  1. **AWS 관련 변수**
-#  - `AWS_ACCOUNT_ID`: AWS 계정 ID.
-#- `AWS_DEFAULT_REGION`: 기본 리전 (예: us-east-1).
-#  2. **ECR 관련 변수**
-#- `IMAGE_REPO_NAME`: ECR 리포지토리 이름.
-#- `IMAGE_TAG`: Docker 이미지 태그 (예: latest).
-#  3. **CodeCommit 관련 변수**
-#- `CODECOMMIT_ACCESS_KEY`: CodeCommit 접근 키.
-#- `CODECOMMIT_SECRET_KEY`: CodeCommit 비밀 키.
-#- `OPS_REPO_NAME`: GitOps 레포지토리 이름.
-#- `GIT_USER_EMAIL`: Git 사용자 이메일.
-#- `GIT_USER_NAME`: Git 사용자 이름.
-#- `SERVICE_NAME` : 서비스 이름 (ex: member, channel...)
-
 phases:
   install:
     commands:
@@ -40,7 +24,7 @@ phases:
       - |
         echo Building the Docker image \
         && DATE=$(date '+%Y%m%d%H%M%S') \
-        && docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG$DATE . \
+        && docker build --build-arg RDS_PASSWORD=$RDS_PASSWORD -t $IMAGE_REPO_NAME:$IMAGE_TAG$DATE . \
         && docker tag $IMAGE_REPO_NAME:$IMAGE_TAG$DATE $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG$DATE \
         && docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG$DATE
 
@@ -57,4 +41,3 @@ phases:
         && git add . \
         && git commit -m "update image tag $DATE" \
         && git push
-        
