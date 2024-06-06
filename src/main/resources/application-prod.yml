@@ -29,7 +29,7 @@ spring:
 
 openapi:
   service:
-    url: ${SERVER_URL}:8000
+    url: ${SERVER_URL}
 
 eureka:
   client:
