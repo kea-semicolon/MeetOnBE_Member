@@ -1,6 +1,6 @@
 app:
   gateway:
-    url: https://a4a87b19384b54f64966378ae5e651f4-1374310802.ap-northeast-2.elb.amazonaws.com
+    url: ${SERVER_URL}
 
 spring:
   application:
@@ -8,8 +8,8 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://meeton-member.chke6w2cu29b.ap-northeast-2.rds.amazonaws.com:3306/member
-    username: semicolon
+    url: ${RDS_URL}
+    username: ${RDS_USERNAME}
     password: ${RDS_PASSWORD}
 
   cloud:
@@ -23,13 +23,13 @@ spring:
 
   kafka:
     consumer:
-      bootstrap-servers: 43.201.98.120:9092
+      bootstrap-servers: ${KAFKA_SERVER_URL}
     producer:
-      bootstrap-servers: 43.201.98.120:9092
+      bootstrap-servers: ${KAFKA_SERVER_URL}
 
 openapi:
   service:
-    url: https://a4a87b19384b54f64966378ae5e651f4-1374310802.ap-northeast-2.elb.amazonaws.com:8000
+    url: ${SERVER_URL}:8000
 
 eureka:
   client:
