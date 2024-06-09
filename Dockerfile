@@ -16,6 +16,9 @@ RUN ls -al /app/build/libs # 빌드된 jar 파일 목록 출력
 FROM openjdk:17.0.2-slim
 WORKDIR /app
 
+# curl 설치
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # 빌드 단계에서 생성된 JAR 파일을 복사
 COPY --from=build /app/build/libs/MeetOn-0.0.1-SNAPSHOT.jar /app/app.jar
 
