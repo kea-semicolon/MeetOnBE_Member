@@ -25,6 +25,17 @@ COPY --from=build /app/build/libs/MeetOn-0.0.1-SNAPSHOT.jar /app/app.jar
 # Elastic APM 에이전트 다운로드
 RUN curl -L -o elastic-apm-agent.jar https://search.maven.org/remotecontent?filepath=co/elastic/apm/elastic-apm-agent/1.50.0/elastic-apm-agent-1.50.0.jar
 
+ARG RDS_PASSWORD
+ARG RDS_URL
+ARG RDS_USERNAME
+ARG KAFKA_SERVER_URL
+ARG SERVER_URL
+ARG JWT_SECRET_KEY
+ARG APM_SERVICE_NAME
+ARG APM_SECRET_TOKEN
+ARG APM_SERVER_URL
+ARG APM_ENVIRONMENT
+
 # 환경 변수를 ENV로 설정
 ENV RDS_PASSWORD=${RDS_PASSWORD}
 ENV RDS_URL=${RDS_URL}
@@ -46,3 +57,4 @@ CMD ["sh", "-c", "java -javaagent:/app/elastic-apm-agent.jar \
     -Delastic.apm.application_packages=semicolon.MeetOn \
     -Dspring.profiles.active=prod \
     -jar /app/app.jar"]
+
